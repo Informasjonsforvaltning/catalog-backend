@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-backend
+  labels:
+    app: catalog-backend
+    fdk.service: catalog-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      fdk.service: catalog-backend
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: catalog-backend
+        fdk.service: catalog-backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/prometheus"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+        - name: catalog-backend
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:+UseZGC -XX:MaxRAMPercentage=80.0"
+          image: catalog-backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 5
+          resources:
+            requests:
+              cpu: 20m
+              memory: 750Mi
+            limits:
+              memory: 750Mi

@@ -1,0 +1,19 @@
+server:
+  port: 8080
+logging:
+  level.root: WARN
+  level.no: ${LOG_LEVEL:INFO}
+  level.org.springframework: WARN
+  level.org.springframework.web: WARN
+management:
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        info: ping
+        health: ready
+      exposure:
+        include: health, info, prometheus
+  metrics:
+    tags:
+      application: catalog-backend
