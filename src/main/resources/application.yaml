@@ -17,3 +17,45 @@ management:
   metrics:
     tags:
       application: catalog-backend
+spring:
+  mvc:
+    problemdetails:
+      enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_OIDC_ISSUER}
+          jwk-set-uri: ${KEYCLOAK_OIDC_ISSUER}/protocol/openid-connect/certs
+          audiences: catalog-backend
+          authorities-claim-name: authorities
+          authority-prefix: ""
+          authorities-claim-delimiter: ","
+application:
+  cors.originPatterns: "${CORS_ORIGIN_PATTERNS}"
+
+---
+spring:
+  config.activate.on-profile: dev
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://auth.staging.fellesdatakatalog.digdir.no/realms/fdk
+          jwk-set-uri: https://auth.staging.fellesdatakatalog.digdir.no/realms/fdk/protocol/openid-connect/certs
+logging:
+  level.no: DEBUG
+application:
+  cors.originPatterns: "*"
+
+---
+spring:
+  config.activate.on-profile: test
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:5050/auth/realms/fdk
+          jwk-set-uri: http://localhost:5050/auth/realms/fdk/protocol/openid-connect/certs
+application:
+  cors.originPatterns: "*"

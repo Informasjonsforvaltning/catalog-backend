@@ -28,6 +28,16 @@ spec:
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:+UseZGC -XX:MaxRAMPercentage=80.0"
+            - name: KEYCLOAK_OIDC_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak
+                  key: KEYCLOAK_OIDC_ISSUER
+            - name: CORS_ORIGIN_PATTERNS
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-backend
+                  key: CORS_ORIGIN_PATTERNS
           image: catalog-backend
           imagePullPolicy: Always
           ports:
