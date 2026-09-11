@@ -1,4 +1,4 @@
-package no.fdk.catalogbackend.integration.config
+package no.fdk.catalogbackend.testsupport
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration

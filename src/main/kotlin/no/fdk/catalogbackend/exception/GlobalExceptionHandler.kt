@@ -1,11 +1,11 @@
 package no.fdk.catalogbackend.exception
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import tools.jackson.core.JacksonException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -21,7 +21,7 @@ class GlobalExceptionHandler {
         ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.message)
 
     @ExceptionHandler
-    fun handleJsonProcessingException(ex: JsonProcessingException): ProblemDetail =
+    fun handleJacksonException(ex: JacksonException): ProblemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.originalMessage)
 
     @ExceptionHandler

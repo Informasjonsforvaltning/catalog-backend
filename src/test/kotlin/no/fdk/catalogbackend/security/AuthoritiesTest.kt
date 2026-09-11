@@ -1,11 +1,12 @@
-package no.fdk.catalogbackend.integration.security
+package no.fdk.catalogbackend.security
 
+import no.fdk.catalogbackend.testsupport.PostgresTestcontainer
 import no.fdk.catalogbackend.testsupport.TestResourceController
-import no.fdk.catalogbackend.utils.jwt.Access
-import no.fdk.catalogbackend.utils.jwt.CATALOG_ID
-import no.fdk.catalogbackend.utils.jwt.JwtToken
-import no.fdk.catalogbackend.utils.startMockServer
-import no.fdk.catalogbackend.utils.stopMockServer
+import no.fdk.catalogbackend.testsupport.jwt.Access
+import no.fdk.catalogbackend.testsupport.jwt.CATALOG_ID
+import no.fdk.catalogbackend.testsupport.jwt.JwtToken
+import no.fdk.catalogbackend.testsupport.startMockServer
+import no.fdk.catalogbackend.testsupport.stopMockServer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
@@ -27,7 +28,7 @@ import org.springframework.test.web.servlet.post
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(TestResourceController::class)
+@Import(TestResourceController::class, PostgresTestcontainer::class)
 class AuthoritiesTest(@param:Autowired val mockMvc: MockMvc) {
     companion object {
         @JvmStatic
@@ -64,9 +65,6 @@ class AuthoritiesTest(@param:Autowired val mockMvc: MockMvc) {
             .andExpect { status { isOk() } }
     }
 
-    /**
-     * Root admin reads across organizations but deliberately cannot modify their content.
-     */
     @ParameterizedTest
     @EnumSource(value = Access::class, names = ["ORG_READ", "ROOT", "WRONG_ORG_WRITE"])
     fun `write is denied to read-only, root admin and other catalogs`(access: Access) {

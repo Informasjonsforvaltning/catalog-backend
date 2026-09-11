@@ -1,0 +1,14 @@
+-- Test scope only.
+CREATE TABLE fake_resources (
+    id             VARCHAR(255) NOT NULL PRIMARY KEY,
+    catalog_id     VARCHAR(50)  NOT NULL,
+    published      BOOLEAN      NOT NULL DEFAULT FALSE,
+    published_date TIMESTAMP WITH TIME ZONE,
+    created        TIMESTAMP WITH TIME ZONE NOT NULL,
+    last_modified  TIMESTAMP WITH TIME ZONE,
+    uri            VARCHAR(500),
+    data           JSONB
+);
+
+CREATE INDEX idx_fake_resources_catalog_id ON fake_resources (catalog_id);
+CREATE INDEX idx_fake_resources_catalog_published ON fake_resources (catalog_id, published);

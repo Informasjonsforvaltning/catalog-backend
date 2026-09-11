@@ -1,10 +1,11 @@
-package no.fdk.catalogbackend.integration.config
+package no.fdk.catalogbackend.config
 
-import no.fdk.catalogbackend.utils.jwt.Access
-import no.fdk.catalogbackend.utils.jwt.CATALOG_ID
-import no.fdk.catalogbackend.utils.jwt.JwtToken
-import no.fdk.catalogbackend.utils.startMockServer
-import no.fdk.catalogbackend.utils.stopMockServer
+import no.fdk.catalogbackend.testsupport.PostgresTestcontainer
+import no.fdk.catalogbackend.testsupport.jwt.Access
+import no.fdk.catalogbackend.testsupport.jwt.CATALOG_ID
+import no.fdk.catalogbackend.testsupport.jwt.JwtToken
+import no.fdk.catalogbackend.testsupport.startMockServer
+import no.fdk.catalogbackend.testsupport.stopMockServer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.get
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(PostgresTestcontainer::class)
 class SecurityConfigTest(@param:Autowired val mockMvc: MockMvc) {
     companion object {
         @JvmStatic

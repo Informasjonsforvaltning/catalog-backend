@@ -1,4 +1,4 @@
-package no.fdk.catalogbackend.utils.jwt
+package no.fdk.catalogbackend.testsupport.jwt
 
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
