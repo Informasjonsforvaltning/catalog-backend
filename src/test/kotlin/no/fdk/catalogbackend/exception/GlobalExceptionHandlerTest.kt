@@ -1,9 +1,5 @@
-package no.fdk.catalogbackend.unit.exception
+package no.fdk.catalogbackend.exception
 
-import no.fdk.catalogbackend.exception.BadRequestException
-import no.fdk.catalogbackend.exception.GlobalExceptionHandler
-import no.fdk.catalogbackend.exception.InternalServerErrorException
-import no.fdk.catalogbackend.exception.NotFoundException
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn

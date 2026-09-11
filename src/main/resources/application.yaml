@@ -21,6 +21,18 @@ spring:
   mvc:
     problemdetails:
       enabled: true
+  datasource:
+    url: jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB:catalog_backend}
+    username: ${POSTGRESQL_USER}
+    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   security:
     oauth2:
       resourceserver:
@@ -32,11 +44,18 @@ spring:
           authority-prefix: ""
           authorities-claim-delimiter: ","
 application:
+  catalogBackendUri: ${CATALOG_BACKEND_URI}
+  organizationCatalogUri: ${ORGANIZATION_CATALOG_BASE_URI}
+  harvestAdminUri: ${ADMIN_API_BASE_URI}
   cors.originPatterns: "${CORS_ORIGIN_PATTERNS}"
 
 ---
 spring:
   config.activate.on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/catalog_backend
+    username: root
+    password: secret
   security:
     oauth2:
       resourceserver:
@@ -46,11 +65,16 @@ spring:
 logging:
   level.no: DEBUG
 application:
+  catalogBackendUri: http://localhost:8080
+  organizationCatalogUri: https://organization-catalog.staging.fellesdatakatalog.digdir.no
+  harvestAdminUri: https://admin-api.staging.fellesdatakatalog.digdir.no
   cors.originPatterns: "*"
 
 ---
 spring:
   config.activate.on-profile: test
+  flyway:
+    locations: classpath:db/migration,classpath:db/test-migration
   security:
     oauth2:
       resourceserver:
@@ -58,4 +82,7 @@ spring:
           issuer-uri: http://localhost:5050/auth/realms/fdk
           jwk-set-uri: http://localhost:5050/auth/realms/fdk/protocol/openid-connect/certs
 application:
+  catalogBackendUri: http://localhost:5050
+  organizationCatalogUri: http://localhost:5050
+  harvestAdminUri: http://localhost:5050
   cors.originPatterns: "*"

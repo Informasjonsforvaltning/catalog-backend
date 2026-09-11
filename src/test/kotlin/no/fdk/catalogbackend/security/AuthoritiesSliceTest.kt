@@ -1,8 +1,8 @@
-package no.fdk.catalogbackend.integration.security
+package no.fdk.catalogbackend.security
 
-import no.fdk.catalogbackend.integration.config.WebMvcTestSecurityConfig
 import no.fdk.catalogbackend.testsupport.TestResourceController
-import no.fdk.catalogbackend.utils.jwt.CATALOG_ID
+import no.fdk.catalogbackend.testsupport.WebMvcTestSecurityConfig
+import no.fdk.catalogbackend.testsupport.jwt.CATALOG_ID
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

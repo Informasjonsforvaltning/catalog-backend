@@ -1,10 +1,10 @@
-package no.fdk.catalogbackend.utils
+package no.fdk.catalogbackend.testsupport
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
-import no.fdk.catalogbackend.utils.jwt.JwkStore
+import no.fdk.catalogbackend.testsupport.jwt.JwkStore
 
 private val mockserver = WireMockServer(5050)
 

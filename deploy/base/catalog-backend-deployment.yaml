@@ -38,6 +38,18 @@ spec:
                 secretKeyRef:
                   name: catalog-backend
                   key: CORS_ORIGIN_PATTERNS
+            - name: ADMIN_API_BASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: commonurl
+                  key: ADMIN_API_BASE_URI
+            - name: CATALOG_BACKEND_URI # TODO: Add value from secret when available
+              value: "https://temporary.fellesdatakatalog.digdir.no"
+            - name: ORGANIZATION_CATALOG_BASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: commonurl
+                  key: ORGANIZATION_CATALOG_BASE_URI
           image: catalog-backend
           imagePullPolicy: Always
           ports:
