@@ -21,13 +21,18 @@ spring:
   mvc:
     problemdetails:
       enabled: true
-  # Temporary until implementation of persistance outside of tests.
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
-      - org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration
-      - org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration
-      - org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration
+  datasource:
+    url: jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB:catalog_backend}
+    username: ${POSTGRESQL_USER}
+    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   security:
     oauth2:
       resourceserver:
@@ -47,20 +52,10 @@ application:
 ---
 spring:
   config.activate.on-profile: dev
-  autoconfigure:
-    exclude: []
   datasource:
     url: jdbc:postgresql://localhost:5432/catalog_backend
     username: root
     password: secret
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
   security:
     oauth2:
       resourceserver:
@@ -79,15 +74,7 @@ application:
 # Datasource is supplied by the Testcontainers @ServiceConnection, not configured here.
 spring:
   config.activate.on-profile: test
-  autoconfigure:
-    exclude: []
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
   flyway:
-    enabled: true
-    baseline-on-migrate: true
     # The fake resource type that core is tested against brings its own table.
     locations: classpath:db/migration,classpath:db/test-migration
   security:
