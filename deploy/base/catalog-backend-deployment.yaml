@@ -28,6 +28,31 @@ spec:
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:+UseZGC -XX:MaxRAMPercentage=80.0"
+            - name: POSTGRESQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: HOST
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: PORT
+            - name: POSTGRESQL_DB
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-backend
+                  key: POSTGRESQL_DB
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-backend
+                  key: POSTGRESQL_USER
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-backend
+                  key: POSTGRESQL_PASSWORD
             - name: KEYCLOAK_OIDC_ISSUER
               valueFrom:
                 secretKeyRef:
@@ -73,6 +98,6 @@ spec:
           resources:
             requests:
               cpu: 20m
-              memory: 750Mi
+              memory: 1500Mi
             limits:
-              memory: 750Mi
+              memory: 1500Mi

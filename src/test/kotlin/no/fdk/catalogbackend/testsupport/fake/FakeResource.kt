@@ -50,4 +50,6 @@ class FakeResourceMapper : ResourceMapper<FakeValues, FakeDto> {
         title = entity.data?.get("title") as String?,
         description = entity.data?.get("description") as String?,
     )
+
+    override fun toValues(dto: FakeDto): FakeValues = FakeValues(title = dto.title, description = dto.description)
 }

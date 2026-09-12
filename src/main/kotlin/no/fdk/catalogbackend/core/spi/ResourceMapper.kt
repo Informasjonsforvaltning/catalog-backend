@@ -15,4 +15,7 @@ interface ResourceMapper<V : Any, D : Any> {
     fun toPayload(values: V): Map<String, Any?>
 
     fun toDto(entity: CatalogResourceEntity): D
+
+    /** Strips server-owned fields from a DTO. */
+    fun toValues(dto: D): V
 }

@@ -82,12 +82,15 @@ class SecurityConfigTest(@param:Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    fun `valid token authenticates and passes the filter chain`() {
+    fun `valid token authenticates and reaches the resource controller`() {
         val token = JwtToken(Access.ORG_ADMIN)
 
         mockMvc
             .get("/internal/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
-            }.andExpect { status { isNotFound() } }
+            }.andExpect {
+                status { isOk() }
+                content { string("[]") }
+            }
     }
 }
