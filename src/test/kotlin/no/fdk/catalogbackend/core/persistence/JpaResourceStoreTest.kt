@@ -98,4 +98,16 @@ class JpaResourceStoreTest(@param:Autowired val registry: ResourceRegistry) {
 
         assertTrue(exception.message!!.contains("is backed by FakeResourceEntity"))
     }
+
+    @Test
+    fun `published queries only return published rows`() {
+        persist("draft", published = false)
+        persist("live", published = true)
+        persist("other-live", published = true, catalog = "other")
+
+        assertEquals(listOf("live", "other-live"), store().findAllPublished().map { it.id }.sorted())
+        assertEquals(listOf("live"), store().findAllPublished(catalogId).map { it.id })
+        assertEquals("live", store().findPublishedById(catalogId, "live")?.id)
+        assertNull(store().findPublishedById(catalogId, "draft"))
+    }
 }

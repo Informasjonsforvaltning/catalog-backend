@@ -7,7 +7,12 @@ import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.persistence.CatalogResourceRepository
 import no.fdk.catalogbackend.core.persistence.JpaResourceStore
 import no.fdk.catalogbackend.core.spi.ResourceMapper
+import no.fdk.catalogbackend.core.spi.ResourceRdfWriter
 import no.fdk.catalogbackend.core.spi.ResourceTypeMetadata
+import org.apache.jena.rdf.model.Model
+import org.apache.jena.rdf.model.ResourceFactory
+import org.apache.jena.vocabulary.DCAT
+import org.apache.jena.vocabulary.RDF
 import org.springframework.stereotype.Component
 
 /**
@@ -52,4 +57,17 @@ class FakeResourceMapper : ResourceMapper<FakeValues, FakeDto> {
     )
 
     override fun toValues(dto: FakeDto): FakeValues = FakeValues(title = dto.title, description = dto.description)
+}
+
+@Component
+class FakeResourceRdfWriter : ResourceRdfWriter {
+    override val resourceType = FAKE_RESOURCE
+
+    override fun write(model: Model, entity: CatalogResourceEntity) {
+        val catalog = model.createResource("http://localhost:5050/catalogs/${entity.catalogId}")
+            .addProperty(RDF.type, DCAT.Catalog)
+        val resource = model.createResource(entity.uri ?: "http://localhost:5050/catalogs/${entity.catalogId}/fake-resources/${entity.id}")
+            .addProperty(RDF.type, ResourceFactory.createResource("https://example.com/ns#FakeResource"))
+        catalog.addProperty(ResourceFactory.createProperty("https://example.com/ns#fake"), resource)
+    }
 }

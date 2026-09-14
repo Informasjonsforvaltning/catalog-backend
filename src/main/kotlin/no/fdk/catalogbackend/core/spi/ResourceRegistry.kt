@@ -7,22 +7,29 @@ import org.springframework.stereotype.Component
  * Indexes every resource type's contributions and validates them at startup.
  */
 @Component
-class ResourceRegistry(stores: List<ResourceStore>, metadata: List<ResourceTypeMetadata>, mappers: List<ResourceMapper<*, *>>) {
+class ResourceRegistry(
+    stores: List<ResourceStore>,
+    metadata: List<ResourceTypeMetadata>,
+    mappers: List<ResourceMapper<*, *>>,
+    rdfWriters: List<ResourceRdfWriter>,
+) {
     private val storesByType = stores.indexUnique("store") { it.resourceType }
     private val metadataByType = metadata.indexUnique("metadata") { it.resourceType }
     private val mappersByType = mappers.indexUnique("mapper") { it.resourceType }
+    private val rdfWritersByType = rdfWriters.indexUnique("rdf writer") { it.resourceType }
 
     /** Every type known to the application, in a stable order. */
     val resourceTypes: List<ResourceType> = storesByType.keys.sortedBy { it.key }
 
     init {
-        val declared = storesByType.keys + metadataByType.keys + mappersByType.keys
+        val declared = storesByType.keys + metadataByType.keys + mappersByType.keys + rdfWritersByType.keys
         val incomplete = declared
             .associateWith { type ->
                 listOfNotNull(
                     "store".takeUnless { storesByType.containsKey(type) },
                     "metadata".takeUnless { metadataByType.containsKey(type) },
                     "mapper".takeUnless { mappersByType.containsKey(type) },
+                    "rdf writer".takeUnless { rdfWritersByType.containsKey(type) },
                 )
             }.filterValues { it.isNotEmpty() }
 
@@ -37,6 +44,8 @@ class ResourceRegistry(stores: List<ResourceStore>, metadata: List<ResourceTypeM
     fun metadata(resourceType: ResourceType): ResourceTypeMetadata = metadataByType.require(resourceType, "metadata")
 
     fun mapper(resourceType: ResourceType): ResourceMapper<*, *> = mappersByType.require(resourceType, "mapper")
+
+    fun rdfWriter(resourceType: ResourceType): ResourceRdfWriter = rdfWritersByType.require(resourceType, "rdf writer")
 
     fun stores(): Collection<ResourceStore> = storesByType.values
 

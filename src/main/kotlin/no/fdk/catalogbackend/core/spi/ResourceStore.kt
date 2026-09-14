@@ -18,11 +18,17 @@ interface ResourceStore {
 
     fun findById(catalogId: String, id: String): CatalogResourceEntity?
 
+    fun findAllPublished(): List<CatalogResourceEntity>
+
+    fun findAllPublished(catalogId: String): List<CatalogResourceEntity>
+
+    fun findPublishedById(catalogId: String, id: String): CatalogResourceEntity?
+
     fun save(entity: CatalogResourceEntity): CatalogResourceEntity
 
     fun delete(entity: CatalogResourceEntity)
 
-    /** Whether the catalog already has a published resource of this type.. */
+    /** Whether the catalog already has a published resource of this type. */
     fun hasPublished(catalogId: String): Boolean
 
     /** Resource count per catalog id, restricted to [catalogIds] when given, otherwise across all catalogs. */
