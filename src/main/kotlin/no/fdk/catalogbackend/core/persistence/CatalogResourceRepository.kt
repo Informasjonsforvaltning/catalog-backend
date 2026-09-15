@@ -21,6 +21,8 @@ interface CatalogResourceRepository<T : CatalogResourceEntity> : JpaRepository<T
 
     fun findByIdAndCatalogIdAndPublishedIsTrue(id: String, catalogId: String): T?
 
+    fun findByIdAndPublishedIsTrue(id: String): T?
+
     fun existsByCatalogIdAndPublishedIsTrue(catalogId: String): Boolean
 
     @Query("SELECT e.catalogId AS catalogId, COUNT(e) AS total FROM #{#entityName} e GROUP BY e.catalogId")

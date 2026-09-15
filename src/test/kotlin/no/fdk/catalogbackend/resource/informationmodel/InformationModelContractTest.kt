@@ -47,7 +47,7 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
     private fun bearer(access: Access = Access.ORG_WRITE) = "Bearer ${JwtToken(access)}"
 
     private fun createModel(body: String = minimalModelJson()): String = mockMvc
-        .post("/internal/catalogs/$CATALOG_ID/information-models") {
+        .post("/catalogs/$CATALOG_ID/information-models") {
             header(HttpHeaders.AUTHORIZATION, bearer())
             contentType = MediaType.APPLICATION_JSON
             content = body
@@ -69,7 +69,7 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
     @Test
     fun `full crud lifecycle`() {
         val location = createModel()
-        assertTrue(location.startsWith("/internal/catalogs/$CATALOG_ID/information-models/"))
+        assertTrue(location.startsWith("/catalogs/$CATALOG_ID/information-models/"))
 
         mockMvc
             .get(location) { header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ)) }
@@ -78,7 +78,7 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
                 jsonPath("$.title.nb") { value("Modell") }
                 jsonPath("$.description.nb") { value("Modellbeskrivelse") }
                 jsonPath("$.published") { value(false) }
-                jsonPath("$.uri") { value(org.hamcrest.Matchers.containsString("/catalogs/$CATALOG_ID/information-models/")) }
+                jsonPath("$.uri") { value(org.hamcrest.Matchers.containsString("/information-models/")) }
             }
 
         mockMvc
@@ -92,7 +92,7 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
             }
 
         mockMvc
-            .get("/internal/catalogs/$CATALOG_ID/information-models") {
+            .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ))
             }.andExpect {
                 status { isOk() }
@@ -124,14 +124,14 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
     fun `count endpoint scopes non-root callers to their organizations`() {
         createModel()
         mockMvc
-            .post("/internal/catalogs/$OTHER_CATALOG_ID/information-models") {
+            .post("/catalogs/$OTHER_CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(Access.WRONG_ORG_WRITE))
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"title":{"nb":"Other"}}"""
             }.andExpect { status { isCreated() } }
 
         val orgScoped = mockMvc
-            .get("/internal/catalogs/count") { header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ)) }
+            .get("/catalogs/count") { header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ)) }
             .andExpect { status { isOk() } }
             .andReturn()
             .response
@@ -141,7 +141,7 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
         assertTrue(!orgScoped.contains(OTHER_CATALOG_ID))
 
         val root = mockMvc
-            .get("/internal/catalogs/count") { header(HttpHeaders.AUTHORIZATION, bearer(Access.ROOT)) }
+            .get("/catalogs/count") { header(HttpHeaders.AUTHORIZATION, bearer(Access.ROOT)) }
             .andExpect { status { isOk() } }
             .andReturn()
             .response

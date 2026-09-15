@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @CrossOrigin
 @RequestMapping(
-    value = ["/catalogs"],
+    value = ["/graphs"],
     produces = [
         "text/turtle",
         "application/rdf+json",
@@ -28,20 +28,19 @@ import org.springframework.web.bind.annotation.RestController
     ],
 )
 class RDFController(private val rdfService: RdfService) {
-    @GetMapping
+    @GetMapping("/catalogs")
     fun getAllCatalogs(@RequestHeader(HttpHeaders.ACCEPT) accept: String?): ResponseEntity<String> =
         ResponseEntity(rdfService.serializeAll(jenaLangFromAcceptHeader(accept)), HttpStatus.OK)
 
-    @GetMapping("/{catalogId}")
+    @GetMapping("/catalogs/{catalogId}")
     fun getCatalog(@RequestHeader(HttpHeaders.ACCEPT) accept: String?, @PathVariable catalogId: String): ResponseEntity<String> =
         ResponseEntity(rdfService.serializeCatalog(catalogId, jenaLangFromAcceptHeader(accept)), HttpStatus.OK)
 
-    @GetMapping("/{catalogId}/{pathSegment}/{id}")
+    @GetMapping("/{pathSegment}/{id}")
     fun getResource(
         @RequestHeader(HttpHeaders.ACCEPT) accept: String?,
-        @PathVariable catalogId: String,
         @PathVariable pathSegment: String,
         @PathVariable id: String,
     ): ResponseEntity<String> =
-        ResponseEntity(rdfService.serializeResource(catalogId, pathSegment, id, jenaLangFromAcceptHeader(accept)), HttpStatus.OK)
+        ResponseEntity(rdfService.serializeResource(pathSegment, id, jenaLangFromAcceptHeader(accept)), HttpStatus.OK)
 }
