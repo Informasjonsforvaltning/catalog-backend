@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/internal/catalogs/{catalogId}/information-models")
+@RequestMapping("/catalogs/{catalogId}/information-models")
 class InformationModelController(private val operations: CatalogResourceOperations, private val mapper: InformationModelMapper) {
     @PreAuthorize(Authorities.READ)
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])

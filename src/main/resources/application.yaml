@@ -44,7 +44,8 @@ spring:
           authority-prefix: ""
           authorities-claim-delimiter: ","
 application:
-  catalogBackendUri: ${CATALOG_BACKEND_URI}
+  catalogIdentifierHost: ${CATALOG_IDENTIFIER_HOST}
+  informationModelIdentifierHost: ${INFORMATION_MODEL_IDENTIFIER_HOST}
   organizationCatalogUri: ${ORGANIZATION_CATALOG_BASE_URI}
   harvestAdminUri: ${ADMIN_API_BASE_URI}
   cors.originPatterns: "${CORS_ORIGIN_PATTERNS}"
@@ -65,7 +66,8 @@ spring:
 logging:
   level.no: DEBUG
 application:
-  catalogBackendUri: http://localhost:8080
+  catalogIdentifierHost: http://localhost:8080
+  informationModelIdentifierHost: http://localhost:8080
   organizationCatalogUri: https://organization-catalog.staging.fellesdatakatalog.digdir.no
   harvestAdminUri: https://admin-api.staging.fellesdatakatalog.digdir.no
   cors.originPatterns: "*"
@@ -84,7 +86,8 @@ spring:
           issuer-uri: http://localhost:5050/auth/realms/fdk
           jwk-set-uri: http://localhost:5050/auth/realms/fdk/protocol/openid-connect/certs
 application:
-  catalogBackendUri: http://localhost:5050
+  catalogIdentifierHost: http://localhost:5050
+  informationModelIdentifierHost: http://localhost:5050
   organizationCatalogUri: http://localhost:5050
   harvestAdminUri: http://localhost:5050
   cors.originPatterns: "*"

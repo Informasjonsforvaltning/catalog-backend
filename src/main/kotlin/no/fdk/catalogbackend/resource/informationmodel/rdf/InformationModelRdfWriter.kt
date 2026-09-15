@@ -6,6 +6,7 @@ import no.fdk.catalogbackend.core.rdf.addContactPoints
 import no.fdk.catalogbackend.core.rdf.safeAddLocalizedString
 import no.fdk.catalogbackend.core.rdf.safeCreateResource
 import no.fdk.catalogbackend.core.rdf.vocabulary.MODELLDCATNO
+import no.fdk.catalogbackend.core.service.ResourceUriService
 import no.fdk.catalogbackend.core.spi.ResourceRdfWriter
 import no.fdk.catalogbackend.resource.informationmodel.INFORMATION_MODEL
 import no.fdk.catalogbackend.resource.informationmodel.InformationModelValues
@@ -18,18 +19,20 @@ import org.springframework.stereotype.Component
 import tools.jackson.databind.ObjectMapper
 
 @Component
-class InformationModelRdfWriter(private val applicationProperties: ApplicationProperties, private val objectMapper: ObjectMapper) :
-    ResourceRdfWriter {
+class InformationModelRdfWriter(
+    private val resourceUriService: ResourceUriService,
+    private val applicationProperties: ApplicationProperties,
+    private val objectMapper: ObjectMapper,
+) : ResourceRdfWriter {
     override val resourceType = INFORMATION_MODEL
 
     override fun write(model: Model, entity: CatalogResourceEntity) {
         model.setNsPrefix("modelldcatno", MODELLDCATNO.URI)
 
         val values = objectMapper.convertValue(entity.data ?: emptyMap<String, Any?>(), InformationModelValues::class.java)
-        val catalogUri = "${applicationProperties.catalogBackendUri}/catalogs/${entity.catalogId}"
+        val catalogUri = resourceUriService.catalogUri(INFORMATION_MODEL, entity.catalogId)
         val organizationUri = "${applicationProperties.organizationCatalogUri}/organizations/${entity.catalogId}"
-        val resourceUri = entity.uri
-            ?: "${applicationProperties.catalogBackendUri}/catalogs/${entity.catalogId}/information-models/${entity.id}"
+        val resourceUri = entity.uri ?: resourceUriService.resourceUri(INFORMATION_MODEL, entity.id)
 
         model.safeCreateResource(organizationUri)
             .addProperty(RDF.type, FOAF.Agent)

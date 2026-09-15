@@ -38,7 +38,7 @@ class CatalogResourceServiceTest(@param:Autowired val service: CatalogResourceSe
         assertEquals(mapOf("title" to "Title"), entity.data)
         assertEquals(false, entity.published)
         assertNotNull(entity.lastModified)
-        assertEquals("http://localhost:5050/catalogs/$catalogId/fake-resources/${entity.id}", entity.uri)
+        assertEquals("http://localhost:5050/${entity.id}", entity.uri)
     }
 
     @Test

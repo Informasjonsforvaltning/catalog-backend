@@ -1,6 +1,5 @@
 package no.fdk.catalogbackend.core.service
 
-import no.fdk.catalogbackend.config.ApplicationProperties
 import no.fdk.catalogbackend.core.model.ResourceType
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.spi.ResourceRegistry
@@ -14,7 +13,7 @@ import java.util.UUID
  * CRUD for any resource type, working in entities and opaque `jsonb` payloads.
  */
 @Service
-class CatalogResourceService(private val registry: ResourceRegistry, private val applicationProperties: ApplicationProperties) {
+class CatalogResourceService(private val registry: ResourceRegistry, private val resourceUriService: ResourceUriService) {
     fun findAll(resourceType: ResourceType, catalogId: String): List<CatalogResourceEntity> =
         registry.store(resourceType).findAll(catalogId)
 
@@ -33,7 +32,7 @@ class CatalogResourceService(private val registry: ResourceRegistry, private val
             this.created = now
             this.lastModified = now
             this.data = payload
-            this.uri = resourceUri(resourceType, catalogId, this.id)
+            this.uri = resourceUriService.resourceUri(resourceType, this.id)
         }
 
         return store.save(entity)
@@ -59,12 +58,4 @@ class CatalogResourceService(private val registry: ResourceRegistry, private val
      */
     fun countsPerCatalog(catalogIds: Collection<String>?): Map<ResourceType, Map<String, Long>> =
         registry.stores().associate { it.resourceType to it.countsPerCatalog(catalogIds) }
-
-    /**
-     * Mints the resource's public URI, which must match the path the RDF controller serves it on.
-     */
-    private fun resourceUri(resourceType: ResourceType, catalogId: String, id: String): String {
-        val pathSegment = registry.metadata(resourceType).pathSegment
-        return "${applicationProperties.catalogBackendUri}/catalogs/$catalogId/$pathSegment/$id"
-    }
 }
