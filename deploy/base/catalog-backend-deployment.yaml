@@ -68,8 +68,16 @@ spec:
                 secretKeyRef:
                   name: commonurl
                   key: ADMIN_API_BASE_URI
-            - name: CATALOG_BACKEND_URI # TODO: Add value from secret when available
-              value: "https://temporary.fellesdatakatalog.digdir.no"
+            - name: CATALOG_IDENTIFIER_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: resource-identificators
+                  key: CATALOG_HOST
+            - name: INFORMATION_MODEL_IDENTIFIER_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: resource-identificators
+                  key: INFORMATION_MODEL_HOST
             - name: ORGANIZATION_CATALOG_BASE_URI
               valueFrom:
                 secretKeyRef:

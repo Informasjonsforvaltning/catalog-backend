@@ -14,30 +14,22 @@ import org.springframework.stereotype.Service
 
 @Service
 class RdfService(private val registry: ResourceRegistry) {
-    fun serializeAll(lang: Lang): String {
-        val model = createModel()
-        registry.stores().forEach { store ->
-            val writer = registry.rdfWriter(store.resourceType)
-            store.findAllPublished().forEach { writer.write(model, it) }
-        }
-        return model.createRDFResponse(lang)
-    }
-
-    fun serializeCatalog(catalogId: String, lang: Lang): String {
-        val model = createModel()
-        registry.stores().forEach { store ->
-            val writer = registry.rdfWriter(store.resourceType)
-            store.findAllPublished(catalogId).forEach { writer.write(model, it) }
-        }
-        return model.createRDFResponse(lang)
-    }
-
-    fun serializeResource(catalogId: String, pathSegment: String, id: String, lang: Lang): String {
+    fun serializeCatalog(catalogId: String, pathSegment: String, lang: Lang): String {
         val resourceType = registry.resourceTypes.firstOrNull { registry.metadata(it).pathSegment == pathSegment }
             ?: throw NotFoundException("Unknown resource path segment: $pathSegment")
 
-        val entity = registry.store(resourceType).findPublishedById(catalogId, id)
-            ?: throw NotFoundException("No published $resourceType with id $id in catalog $catalogId")
+        val model = createModel()
+        val writer = registry.rdfWriter(resourceType)
+        registry.store(resourceType).findAllPublished(catalogId).forEach { writer.write(model, it) }
+        return model.createRDFResponse(lang)
+    }
+
+    fun serializeResource(pathSegment: String, id: String, lang: Lang): String {
+        val resourceType = registry.resourceTypes.firstOrNull { registry.metadata(it).pathSegment == pathSegment }
+            ?: throw NotFoundException("Unknown resource path segment: $pathSegment")
+
+        val entity = registry.store(resourceType).findPublishedById(id)
+            ?: throw NotFoundException("No published $resourceType with id $id")
 
         val model = createModel()
         registry.rdfWriter(resourceType).write(model, entity)

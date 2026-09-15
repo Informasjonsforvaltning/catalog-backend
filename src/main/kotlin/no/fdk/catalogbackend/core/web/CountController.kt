@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/internal/catalogs/count")
+@RequestMapping("/catalogs/count")
 class CountController(private val service: CatalogResourceService) {
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun counts(authentication: Authentication): ResponseEntity<List<CatalogCount>> {
