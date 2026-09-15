@@ -30,7 +30,7 @@ class CatalogResourceOperations(private val service: CatalogResourceService, pri
     ): ResponseEntity<Void> {
         validate(values)
         val created = service.register(resourceType, catalogId, mapper.toPayload(values))
-        return ResponseEntity.created(URI.create("/internal/catalogs/$catalogId/$pathSegment/${created.id}")).build()
+        return ResponseEntity.created(URI.create("/catalogs/$catalogId/$pathSegment/${created.id}")).build()
     }
 
     fun <V : Any, D : Any> patch(

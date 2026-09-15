@@ -65,7 +65,7 @@ class RDFControllerTest(
                 this.published = published
                 created = Instant.now()
                 lastModified = Instant.now()
-                uri = "http://localhost:5050/catalogs/$CATALOG_ID/information-models/$id"
+                uri = "http://localhost:5050/information-models/$id"
                 data = mapOf(
                     "title" to mapOf("nb" to "Testmodell"),
                     "description" to mapOf("nb" to "En beskrivelse"),
@@ -85,7 +85,7 @@ class RDFControllerTest(
         persistPublished()
 
         val body = mockMvc
-            .get("/catalogs/$CATALOG_ID/information-models/model-1") {
+            .get("/graphs/information-models/model-1") {
                 header(HttpHeaders.ACCEPT, "text/turtle")
             }.andExpect {
                 status { isOk() }
@@ -101,7 +101,7 @@ class RDFControllerTest(
     @Test
     fun `unpublished resources are not exposed on the public rdf endpoints`() {
         val location = mockMvc
-            .post("/internal/catalogs/$CATALOG_ID/information-models") {
+            .post("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer())
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"title": {"nb": "Utkast"}}"""
@@ -112,12 +112,12 @@ class RDFControllerTest(
         val id = location.substringAfterLast("/")
 
         mockMvc
-            .get("/catalogs/$CATALOG_ID/information-models/$id") {
+            .get("/graphs/information-models/$id") {
                 header(HttpHeaders.ACCEPT, "text/turtle")
             }.andExpect { status { isNotFound() } }
 
         val catalogBody = mockMvc
-            .get("/catalogs/$CATALOG_ID") {
+            .get("/graphs/catalogs/$CATALOG_ID") {
                 header(HttpHeaders.ACCEPT, "text/turtle")
             }.andExpect { status { isOk() } }
             .andReturn()
@@ -133,7 +133,7 @@ class RDFControllerTest(
         persistPublished()
 
         mockMvc
-            .get("/catalogs/$CATALOG_ID") {
+            .get("/graphs/catalogs/$CATALOG_ID") {
                 header(HttpHeaders.ACCEPT, "application/json")
             }.andExpect { status { isNotAcceptable() } }
     }
@@ -143,7 +143,7 @@ class RDFControllerTest(
         persistPublished(id = "model-jsonld")
 
         val body = mockMvc
-            .get("/catalogs/$CATALOG_ID/information-models/model-jsonld") {
+            .get("/graphs/information-models/model-jsonld") {
                 header(HttpHeaders.ACCEPT, "application/ld+json")
             }.andExpect {
                 status { isOk() }

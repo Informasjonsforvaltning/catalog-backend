@@ -6,6 +6,7 @@ import no.fdk.catalogbackend.core.model.ResourceType
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.persistence.CatalogResourceRepository
 import no.fdk.catalogbackend.core.persistence.JpaResourceStore
+import no.fdk.catalogbackend.core.service.ResourceUriService
 import no.fdk.catalogbackend.core.spi.ResourceMapper
 import no.fdk.catalogbackend.core.spi.ResourceRdfWriter
 import no.fdk.catalogbackend.core.spi.ResourceTypeMetadata
@@ -34,6 +35,7 @@ class FakeResourceStore(repository: FakeResourceRepository) :
 class FakeResourceMetadata : ResourceTypeMetadata {
     override val resourceType = FAKE_RESOURCE
     override val pathSegment = "fake-resources"
+    override val identifierHost = "http://localhost:5050"
     override val dataSourceType = "FAKE-AP-NO"
     override val harvestDataType = "fake"
 }
@@ -60,13 +62,14 @@ class FakeResourceMapper : ResourceMapper<FakeValues, FakeDto> {
 }
 
 @Component
-class FakeResourceRdfWriter : ResourceRdfWriter {
+class FakeResourceRdfWriter(private val resourceUriService: ResourceUriService) : ResourceRdfWriter {
     override val resourceType = FAKE_RESOURCE
 
     override fun write(model: Model, entity: CatalogResourceEntity) {
-        val catalog = model.createResource("http://localhost:5050/catalogs/${entity.catalogId}")
+        val catalog = model.createResource(resourceUriService.catalogUri(FAKE_RESOURCE, entity.catalogId))
             .addProperty(RDF.type, DCAT.Catalog)
-        val resource = model.createResource(entity.uri ?: "http://localhost:5050/catalogs/${entity.catalogId}/fake-resources/${entity.id}")
+        val resourceUri = entity.uri ?: resourceUriService.resourceUri(FAKE_RESOURCE, entity.id)
+        val resource = model.createResource(resourceUri)
             .addProperty(RDF.type, ResourceFactory.createResource("https://example.com/ns#FakeResource"))
         catalog.addProperty(ResourceFactory.createProperty("https://example.com/ns#fake"), resource)
     }

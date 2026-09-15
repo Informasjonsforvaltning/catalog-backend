@@ -24,7 +24,7 @@ class WebMvcTestSecurityConfig {
         .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         .authorizeHttpRequests { authorize ->
             authorize
-                .requestMatchers(HttpMethod.GET, "/ping", "/ready", "/prometheus", "/catalogs/**", "/swagger-ui/**", "/v3/**")
+                .requestMatchers(HttpMethod.GET, "/ping", "/ready", "/prometheus", "/graphs/**", "/swagger-ui/**", "/v3/**")
                 .permitAll()
             authorize.anyRequest().authenticated()
         }.oauth2ResourceServer { resourceServer -> resourceServer.jwt { } }

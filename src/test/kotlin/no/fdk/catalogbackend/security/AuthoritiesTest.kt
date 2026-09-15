@@ -48,14 +48,14 @@ class AuthoritiesTest(@param:Autowired val mockMvc: MockMvc) {
     @EnumSource(value = Access::class, names = ["ORG_READ", "ORG_WRITE", "ORG_ADMIN", "ROOT", "MULTIPLE_ORGS"])
     fun `read is granted to every role in the catalog and to root admin`(access: Access) {
         mockMvc
-            .get("/internal/catalogs/$CATALOG_ID/information-models") { header(HttpHeaders.AUTHORIZATION, bearer(access)) }
+            .get("/catalogs/$CATALOG_ID/information-models") { header(HttpHeaders.AUTHORIZATION, bearer(access)) }
             .andExpect { status { isOk() } }
     }
 
     @Test
     fun `read is denied to a user with access only to another catalog`() {
         mockMvc
-            .get("/internal/catalogs/$CATALOG_ID/information-models") {
+            .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(Access.WRONG_ORG_WRITE))
             }.andExpect { status { isForbidden() } }
     }
@@ -64,7 +64,7 @@ class AuthoritiesTest(@param:Autowired val mockMvc: MockMvc) {
     @EnumSource(value = Access::class, names = ["ORG_WRITE", "ORG_ADMIN"])
     fun `write is granted to write and admin`(access: Access) {
         mockMvc
-            .post("/internal/catalogs/$CATALOG_ID/information-models") {
+            .post("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(access))
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"title":{"nb":"Modell"}}"""
@@ -75,7 +75,7 @@ class AuthoritiesTest(@param:Autowired val mockMvc: MockMvc) {
     @EnumSource(value = Access::class, names = ["ORG_READ", "ROOT", "WRONG_ORG_WRITE"])
     fun `write is denied to read-only, root admin and other catalogs`(access: Access) {
         mockMvc
-            .post("/internal/catalogs/$CATALOG_ID/information-models") {
+            .post("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(access))
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"title":{"nb":"Modell"}}"""
@@ -85,7 +85,7 @@ class AuthoritiesTest(@param:Autowired val mockMvc: MockMvc) {
     @Test
     fun `delete is granted to write`() {
         val location = mockMvc
-            .post("/internal/catalogs/$CATALOG_ID/information-models") {
+            .post("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_WRITE))
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"title":{"nb":"Modell"}}"""

@@ -32,12 +32,12 @@ class RdfService(private val registry: ResourceRegistry) {
         return model.createRDFResponse(lang)
     }
 
-    fun serializeResource(catalogId: String, pathSegment: String, id: String, lang: Lang): String {
+    fun serializeResource(pathSegment: String, id: String, lang: Lang): String {
         val resourceType = registry.resourceTypes.firstOrNull { registry.metadata(it).pathSegment == pathSegment }
             ?: throw NotFoundException("Unknown resource path segment: $pathSegment")
 
-        val entity = registry.store(resourceType).findPublishedById(catalogId, id)
-            ?: throw NotFoundException("No published $resourceType with id $id in catalog $catalogId")
+        val entity = registry.store(resourceType).findPublishedById(id)
+            ?: throw NotFoundException("No published $resourceType with id $id")
 
         val model = createModel()
         registry.rdfWriter(resourceType).write(model, entity)

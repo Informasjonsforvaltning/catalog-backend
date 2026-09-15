@@ -48,15 +48,15 @@ class SecurityConfigTest(@param:Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    fun `internal endpoints reject requests without a token`() {
-        mockMvc.get("/internal/catalogs/$CATALOG_ID/information-models")
+    fun `authenticated catalog endpoints reject requests without a token`() {
+        mockMvc.get("/catalogs/$CATALOG_ID/information-models")
             .andExpect { status { isUnauthorized() } }
     }
 
     @Test
-    fun `internal endpoints reject a malformed token`() {
+    fun `authenticated catalog endpoints reject a malformed token`() {
         mockMvc
-            .get("/internal/catalogs/$CATALOG_ID/information-models") {
+            .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, "Bearer not-a-jwt")
             }.andExpect { status { isUnauthorized() } }
     }
@@ -66,7 +66,7 @@ class SecurityConfigTest(@param:Autowired val mockMvc: MockMvc) {
         val token = JwtToken(Access.ORG_ADMIN, audience = "some-other-service")
 
         mockMvc
-            .get("/internal/catalogs/$CATALOG_ID/information-models") {
+            .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }.andExpect { status { isUnauthorized() } }
     }
@@ -76,7 +76,7 @@ class SecurityConfigTest(@param:Autowired val mockMvc: MockMvc) {
         val token = JwtToken(Access.ORG_ADMIN, issuer = "https://evil.example.com/realms/fdk")
 
         mockMvc
-            .get("/internal/catalogs/$CATALOG_ID/information-models") {
+            .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }.andExpect { status { isUnauthorized() } }
     }
@@ -86,11 +86,19 @@ class SecurityConfigTest(@param:Autowired val mockMvc: MockMvc) {
         val token = JwtToken(Access.ORG_ADMIN)
 
         mockMvc
-            .get("/internal/catalogs/$CATALOG_ID/information-models") {
+            .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }.andExpect {
                 status { isOk() }
                 content { string("[]") }
             }
+    }
+
+    @Test
+    fun `rdf graph endpoints are open without a token`() {
+        mockMvc
+            .get("/graphs/catalogs") {
+                header(HttpHeaders.ACCEPT, "text/turtle")
+            }.andExpect { status { isOk() } }
     }
 }

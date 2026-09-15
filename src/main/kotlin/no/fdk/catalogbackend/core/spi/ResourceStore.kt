@@ -24,6 +24,8 @@ interface ResourceStore {
 
     fun findPublishedById(catalogId: String, id: String): CatalogResourceEntity?
 
+    fun findPublishedById(id: String): CatalogResourceEntity?
+
     fun save(entity: CatalogResourceEntity): CatalogResourceEntity
 
     fun delete(entity: CatalogResourceEntity)
