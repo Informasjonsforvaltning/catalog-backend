@@ -1,21 +1,17 @@
 package no.fdk.catalogbackend.core.publication
 
-import no.fdk.catalogbackend.config.ApplicationProperties
 import no.fdk.catalogbackend.core.model.ResourceType
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.spi.ResourceRegistry
 import no.fdk.catalogbackend.exception.BadRequestException
 import no.fdk.catalogbackend.exception.NotFoundException
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
-class PublicationService(
-    private val registry: ResourceRegistry,
-    private val applicationProperties: ApplicationProperties,
-    private val harvestAdminClient: HarvestAdminClient,
-) {
+class PublicationService(private val registry: ResourceRegistry, private val eventPublisher: ApplicationEventPublisher) {
     @Transactional
     fun publish(resourceType: ResourceType, catalogId: String, id: String): CatalogResourceEntity {
         val store = registry.store(resourceType)
@@ -35,12 +31,13 @@ class PublicationService(
         entity.lastModified = now
         val saved = store.save(entity)
 
-        val metadata = registry.metadata(resourceType)
-        val catalogUrl = catalogUrl(catalogId, metadata.pathSegment)
-        if (isFirstPublishInCatalog) {
-            harvestAdminClient.createNewDataSource(catalogId, metadata, catalogUrl)
-        }
-        harvestAdminClient.triggerHarvest(catalogId, metadata, catalogUrl)
+        eventPublisher.publishEvent(
+            HarvestCatalogEvent(
+                resourceType = resourceType,
+                catalogId = catalogId,
+                createDataSource = isFirstPublishInCatalog,
+            ),
+        )
 
         return saved
     }
@@ -59,24 +56,20 @@ class PublicationService(
         entity.lastModified = Instant.now()
         val saved = store.save(entity)
 
-        triggerHarvest(resourceType, catalogId)
+        eventPublisher.publishEvent(HarvestCatalogEvent(resourceType = resourceType, catalogId = catalogId))
 
         return saved
     }
 
-    /** Re-trigger harvest after a patch on an already-published resource. */
+    /**
+     * Request harvest after a patch on an already-published resource.
+     * Transactional so [HarvestCatalogEvent] is registered and delivered AFTER_COMMIT
+     * even when the preceding update has already committed.
+     */
+    @Transactional
     fun triggerHarvestIfPublished(resourceType: ResourceType, catalogId: String, published: Boolean) {
         if (published) {
-            triggerHarvest(resourceType, catalogId)
+            eventPublisher.publishEvent(HarvestCatalogEvent(resourceType = resourceType, catalogId = catalogId))
         }
     }
-
-    private fun triggerHarvest(resourceType: ResourceType, catalogId: String) {
-        val metadata = registry.metadata(resourceType)
-        harvestAdminClient.triggerHarvest(catalogId, metadata, catalogUrl(catalogId, metadata.pathSegment))
-    }
-
-    /** Same path the RDF controller serves for one catalog: `GET /graphs/catalogs/{catalogId}/{pathSegment}`. */
-    private fun catalogUrl(catalogId: String, pathSegment: String): String =
-        "${applicationProperties.catalogBackendUri}/graphs/catalogs/$catalogId/$pathSegment"
 }
