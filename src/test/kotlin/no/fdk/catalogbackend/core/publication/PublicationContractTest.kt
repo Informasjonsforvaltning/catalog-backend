@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import no.fdk.catalogbackend.testsupport.PostgresTestcontainer
+import no.fdk.catalogbackend.testsupport.fake.FakeResourceRepository
 import no.fdk.catalogbackend.testsupport.jwt.Access
 import no.fdk.catalogbackend.testsupport.jwt.CATALOG_ID
 import no.fdk.catalogbackend.testsupport.jwt.JwtToken
@@ -29,15 +30,13 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
-import org.springframework.transaction.annotation.Transactional
 
 @Tag("integration")
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(PostgresTestcontainer::class)
-@Transactional
-class PublicationContractTest(@param:Autowired val mockMvc: MockMvc) {
+class PublicationContractTest(@param:Autowired val mockMvc: MockMvc, @param:Autowired val fakeResourceRepository: FakeResourceRepository) {
     companion object {
         @JvmStatic
         @BeforeAll
@@ -49,7 +48,8 @@ class PublicationContractTest(@param:Autowired val mockMvc: MockMvc) {
     }
 
     @BeforeEach
-    fun stubHarvestAdmin() {
+    fun setUp() {
+        fakeResourceRepository.deleteAll()
         mockServer().resetRequests()
         mockServer().stubFor(
             post(urlPathEqualTo("/organizations/$CATALOG_ID/datasources"))
