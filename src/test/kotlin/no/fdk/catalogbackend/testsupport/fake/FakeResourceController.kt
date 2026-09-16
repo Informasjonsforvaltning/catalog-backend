@@ -1,4 +1,4 @@
-package no.fdk.catalogbackend.resource.informationmodel
+package no.fdk.catalogbackend.testsupport.fake
 
 import jakarta.validation.Valid
 import no.fdk.catalogbackend.core.model.JsonPatchOperation
@@ -16,23 +16,21 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * Test-only controller so publication behaviour can be exercised through the fake resource type.
+ */
 @RestController
-@RequestMapping("/catalogs/{catalogId}/information-models")
-class InformationModelController(private val operations: CatalogResourceOperations, private val mapper: InformationModelMapper) {
+@RequestMapping("/catalogs/{catalogId}/fake-resources")
+class FakeResourceController(private val operations: CatalogResourceOperations, private val mapper: FakeResourceMapper) {
     @PreAuthorize(Authorities.READ)
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun findAll(@PathVariable catalogId: String): ResponseEntity<List<InformationModelDto>> =
-        ResponseEntity.ok(operations.findAll(INFORMATION_MODEL, catalogId, mapper))
-
-    @PreAuthorize(Authorities.READ)
-    @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun findById(@PathVariable catalogId: String, @PathVariable id: String): ResponseEntity<InformationModelDto> =
-        ResponseEntity.ok(operations.findById(INFORMATION_MODEL, catalogId, id, mapper))
+    fun findAll(@PathVariable catalogId: String): ResponseEntity<List<FakeDto>> =
+        ResponseEntity.ok(operations.findAll(FAKE_RESOURCE, catalogId, mapper))
 
     @PreAuthorize(Authorities.WRITE)
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun register(@PathVariable catalogId: String, @Valid @RequestBody values: InformationModelValues): ResponseEntity<Void> =
-        operations.register(INFORMATION_MODEL, catalogId, "information-models", values, mapper)
+    fun register(@PathVariable catalogId: String, @Valid @RequestBody values: FakeValues): ResponseEntity<Void> =
+        operations.register(FAKE_RESOURCE, catalogId, "fake-resources", values, mapper)
 
     @PreAuthorize(Authorities.WRITE)
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -40,31 +38,24 @@ class InformationModelController(private val operations: CatalogResourceOperatio
         @PathVariable catalogId: String,
         @PathVariable id: String,
         @Valid @RequestBody operations: List<JsonPatchOperation>,
-    ): ResponseEntity<InformationModelDto> = ResponseEntity.ok(
-        this.operations.patch(
-            INFORMATION_MODEL,
-            catalogId,
-            id,
-            operations,
-            mapper,
-            InformationModelDto::class.java,
-        ),
+    ): ResponseEntity<FakeDto> = ResponseEntity.ok(
+        this.operations.patch(FAKE_RESOURCE, catalogId, id, operations, mapper, FakeDto::class.java),
     )
 
     @PreAuthorize(Authorities.WRITE)
     @DeleteMapping("/{id}")
     fun delete(@PathVariable catalogId: String, @PathVariable id: String): ResponseEntity<Void> {
-        operations.delete(INFORMATION_MODEL, catalogId, id)
+        operations.delete(FAKE_RESOURCE, catalogId, id)
         return ResponseEntity.noContent().build()
     }
 
     @PreAuthorize(Authorities.WRITE)
     @PostMapping("/{id}/publish", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun publish(@PathVariable catalogId: String, @PathVariable id: String): ResponseEntity<InformationModelDto> =
-        ResponseEntity.ok(operations.publish(INFORMATION_MODEL, catalogId, id, mapper))
+    fun publish(@PathVariable catalogId: String, @PathVariable id: String): ResponseEntity<FakeDto> =
+        ResponseEntity.ok(operations.publish(FAKE_RESOURCE, catalogId, id, mapper))
 
     @PreAuthorize(Authorities.WRITE)
     @PostMapping("/{id}/unpublish", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun unpublish(@PathVariable catalogId: String, @PathVariable id: String): ResponseEntity<InformationModelDto> =
-        ResponseEntity.ok(operations.unpublish(INFORMATION_MODEL, catalogId, id, mapper))
+    fun unpublish(@PathVariable catalogId: String, @PathVariable id: String): ResponseEntity<FakeDto> =
+        ResponseEntity.ok(operations.unpublish(FAKE_RESOURCE, catalogId, id, mapper))
 }

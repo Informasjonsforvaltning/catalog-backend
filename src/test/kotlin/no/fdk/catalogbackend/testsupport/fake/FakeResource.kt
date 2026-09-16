@@ -42,7 +42,14 @@ class FakeResourceMetadata : ResourceTypeMetadata {
 
 data class FakeValues(val title: String? = null, val description: String? = null)
 
-data class FakeDto(val id: String, val catalogId: String, val published: Boolean, val title: String?, val description: String?)
+data class FakeDto(
+    val id: String,
+    val catalogId: String,
+    val published: Boolean,
+    val publishedDate: java.time.Instant? = null,
+    val title: String?,
+    val description: String?,
+)
 
 @Component
 class FakeResourceMapper : ResourceMapper<FakeValues, FakeDto> {
@@ -54,6 +61,7 @@ class FakeResourceMapper : ResourceMapper<FakeValues, FakeDto> {
         id = entity.id,
         catalogId = entity.catalogId,
         published = entity.published,
+        publishedDate = entity.publishedDate,
         title = entity.data?.get("title") as String?,
         description = entity.data?.get("description") as String?,
     )

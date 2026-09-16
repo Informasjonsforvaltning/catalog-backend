@@ -78,6 +78,11 @@ spec:
                 secretKeyRef:
                   name: resource-identificators
                   key: INFORMATION_MODEL_HOST
+            - name: CATALOG_BACKEND_BASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: commonurl
+                  key: CATALOG_BACKEND_BASE_URI
             - name: ORGANIZATION_CATALOG_BASE_URI
               valueFrom:
                 secretKeyRef:
