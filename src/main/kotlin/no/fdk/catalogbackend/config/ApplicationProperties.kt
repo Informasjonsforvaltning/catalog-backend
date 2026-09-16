@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class ApplicationProperties(
     val catalogIdentifierHost: String,
     val informationModelIdentifierHost: String,
+    val catalogBackendUri: String,
     val organizationCatalogUri: String,
     val harvestAdminUri: String,
 )

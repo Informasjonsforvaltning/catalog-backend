@@ -71,6 +71,8 @@ class ArchitectureTest {
             .that()
             .resideInAPackage("..core.service..")
             .or()
+            .resideInAPackage("..core.publication..")
+            .or()
             .resideInAPackage("..core.web..")
             .should()
             .dependOnClassesThat()

@@ -22,3 +22,5 @@ fun startMockServer() {
 fun stopMockServer() {
     if (mockserver.isRunning) mockserver.stop()
 }
+
+fun mockServer(): WireMockServer = mockserver

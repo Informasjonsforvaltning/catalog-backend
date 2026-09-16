@@ -46,6 +46,7 @@ spring:
 application:
   catalogIdentifierHost: ${CATALOG_IDENTIFIER_HOST}
   informationModelIdentifierHost: ${INFORMATION_MODEL_IDENTIFIER_HOST}
+  catalogBackendUri: ${CATALOG_BACKEND_BASE_URI}
   organizationCatalogUri: ${ORGANIZATION_CATALOG_BASE_URI}
   harvestAdminUri: ${ADMIN_API_BASE_URI}
   cors.originPatterns: "${CORS_ORIGIN_PATTERNS}"
@@ -68,6 +69,7 @@ logging:
 application:
   catalogIdentifierHost: http://localhost:8080
   informationModelIdentifierHost: http://localhost:8080
+  catalogBackendUri: http://localhost:8080
   organizationCatalogUri: https://organization-catalog.staging.fellesdatakatalog.digdir.no
   harvestAdminUri: https://admin-api.staging.fellesdatakatalog.digdir.no
   cors.originPatterns: "*"
@@ -88,6 +90,7 @@ spring:
 application:
   catalogIdentifierHost: http://localhost:5050
   informationModelIdentifierHost: http://localhost:5050
+  catalogBackendUri: http://localhost:5050
   organizationCatalogUri: http://localhost:5050
   harvestAdminUri: http://localhost:5050
   cors.originPatterns: "*"
