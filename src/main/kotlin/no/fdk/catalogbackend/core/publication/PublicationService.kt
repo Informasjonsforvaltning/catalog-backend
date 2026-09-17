@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @Service
 class PublicationService(
@@ -27,10 +28,13 @@ class PublicationService(
 
         // Evaluate before saving published=true — otherwise every publish looks like a first publish.
         val isFirstPublishInCatalog = !store.hasPublished(catalogId)
-        val now = Instant.now()
+        val now = Instant.now().truncatedTo(ChronoUnit.MICROS)
 
         entity.published = true
-        entity.publishedDate = now
+        // Keep the original first-published timestamp across unpublish/republish cycles.
+        if (entity.publishedDate == null) {
+            entity.publishedDate = now
+        }
         entity.lastModified = now
         val saved = store.save(entity)
 
@@ -55,7 +59,7 @@ class PublicationService(
         }
 
         entity.published = false
-        entity.lastModified = Instant.now()
+        entity.lastModified = Instant.now().truncatedTo(ChronoUnit.MICROS)
         val saved = store.save(entity)
 
         eventPublisher.publishEvent(HarvestCatalogEvent(resourceType = resourceType, catalogId = catalogId))

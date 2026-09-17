@@ -15,6 +15,7 @@ abstract class CatalogResourceEntity {
 
     var published: Boolean = false
 
+    /** Instant of the first successful publish. */
     var publishedDate: Instant? = null
 
     var created: Instant = Instant.EPOCH

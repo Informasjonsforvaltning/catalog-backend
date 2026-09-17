@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
+import com.jayway.jsonpath.JsonPath
 import no.fdk.catalogbackend.testsupport.PostgresTestcontainer
 import no.fdk.catalogbackend.testsupport.fake.FakeResourceRepository
 import no.fdk.catalogbackend.testsupport.jwt.Access
@@ -30,6 +31,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
+import java.time.Instant
+import kotlin.test.assertEquals
 
 @Tag("integration")
 @ActiveProfiles("test")
@@ -162,6 +165,47 @@ class PublicationContractTest(@param:Autowired val mockMvc: MockMvc, @param:Auto
     }
 
     @Test
+    fun `republish keeps the original publishedDate`() {
+        val id = createResource()
+        val firstPublishedDate = Instant.parse(
+            JsonPath.read<String>(
+                mockMvc
+                    .post("/catalogs/$CATALOG_ID/fake-resources/$id/publish") {
+                        header(HttpHeaders.AUTHORIZATION, bearer())
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.publishedDate") { exists() }
+                    }.andReturn()
+                    .response
+                    .contentAsString,
+                "$.publishedDate",
+            ),
+        )
+
+        mockMvc
+            .post("/catalogs/$CATALOG_ID/fake-resources/$id/unpublish") {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+            }.andExpect { status { isOk() } }
+
+        val republishedDate = Instant.parse(
+            JsonPath.read<String>(
+                mockMvc
+                    .post("/catalogs/$CATALOG_ID/fake-resources/$id/publish") {
+                        header(HttpHeaders.AUTHORIZATION, bearer())
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.published") { value(true) }
+                    }.andReturn()
+                    .response
+                    .contentAsString,
+                "$.publishedDate",
+            ),
+        )
+
+        assertEquals(firstPublishedDate, republishedDate)
+    }
+
+    @Test
     fun `unpublish triggers harvest and rejects a second unpublish`() {
         val id = createResource()
         mockMvc
@@ -177,6 +221,7 @@ class PublicationContractTest(@param:Autowired val mockMvc: MockMvc, @param:Auto
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.published") { value(false) }
+                jsonPath("$.publishedDate") { exists() }
             }
 
         mockServer().verify(
