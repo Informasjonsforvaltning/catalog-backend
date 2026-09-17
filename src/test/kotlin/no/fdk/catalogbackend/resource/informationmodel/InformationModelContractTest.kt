@@ -1,5 +1,6 @@
 package no.fdk.catalogbackend.resource.informationmodel
 
+import no.fdk.catalogbackend.config.ApplicationProperties
 import no.fdk.catalogbackend.testsupport.PostgresTestcontainer
 import no.fdk.catalogbackend.testsupport.jwt.Access
 import no.fdk.catalogbackend.testsupport.jwt.CATALOG_ID
@@ -7,6 +8,9 @@ import no.fdk.catalogbackend.testsupport.jwt.JwtToken
 import no.fdk.catalogbackend.testsupport.jwt.OTHER_CATALOG_ID
 import no.fdk.catalogbackend.testsupport.startMockServer
 import no.fdk.catalogbackend.testsupport.stopMockServer
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.hasItem
+import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
@@ -24,7 +28,6 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import org.springframework.transaction.annotation.Transactional
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Tag("integration")
@@ -33,7 +36,10 @@ import kotlin.test.assertTrue
 @AutoConfigureMockMvc
 @Import(PostgresTestcontainer::class)
 @Transactional
-class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
+class InformationModelContractTest(
+    @param:Autowired val mockMvc: MockMvc,
+    @param:Autowired val applicationProperties: ApplicationProperties,
+) {
     companion object {
         @JvmStatic
         @BeforeAll
@@ -70,6 +76,7 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
     fun `full crud lifecycle`() {
         val location = createModel()
         assertTrue(location.startsWith("/catalogs/$CATALOG_ID/information-models/"))
+        val id = location.substringAfterLast("/")
 
         mockMvc
             .get(location) { header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ)) }
@@ -78,7 +85,7 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
                 jsonPath("$.title.nb") { value("Modell") }
                 jsonPath("$.description.nb") { value("Modellbeskrivelse") }
                 jsonPath("$.published") { value(false) }
-                jsonPath("$.uri") { hasJsonPath() }
+                jsonPath("$.uri") { value("${applicationProperties.informationModelIdentifierHost}/$id") }
             }
 
         mockMvc
@@ -130,25 +137,22 @@ class InformationModelContractTest(@param:Autowired val mockMvc: MockMvc) {
                 content = """{"title":{"nb":"Other"}}"""
             }.andExpect { status { isCreated() } }
 
-        val orgScoped = mockMvc
+        mockMvc
             .get("/catalogs/count") { header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ)) }
-            .andExpect { status { isOk() } }
-            .andReturn()
-            .response
-            .contentAsString
+            .andExpect {
+                status { isOk() }
+                jsonPath("$[*].catalogId") { value(containsInAnyOrder(CATALOG_ID)) }
+                jsonPath("$[*].catalogId") { value(not(hasItem(OTHER_CATALOG_ID))) }
+                jsonPath("$[?(@.catalogId == '$CATALOG_ID')].counts.${INFORMATION_MODEL.key}") { value(hasItem(1)) }
+            }
 
-        assertTrue(orgScoped.contains(CATALOG_ID))
-        assertTrue(!orgScoped.contains(OTHER_CATALOG_ID))
-
-        val root = mockMvc
+        mockMvc
             .get("/catalogs/count") { header(HttpHeaders.AUTHORIZATION, bearer(Access.ROOT)) }
-            .andExpect { status { isOk() } }
-            .andReturn()
-            .response
-            .contentAsString
-
-        assertTrue(root.contains(CATALOG_ID))
-        assertTrue(root.contains(OTHER_CATALOG_ID))
-        assertEquals(true, root.contains("INFORMATION_MODEL") || root.contains("\"INFORMATION_MODEL\""))
+            .andExpect {
+                status { isOk() }
+                jsonPath("$[*].catalogId") { value(containsInAnyOrder(CATALOG_ID, OTHER_CATALOG_ID)) }
+                jsonPath("$[?(@.catalogId == '$CATALOG_ID')].counts.${INFORMATION_MODEL.key}") { value(hasItem(1)) }
+                jsonPath("$[?(@.catalogId == '$OTHER_CATALOG_ID')].counts.${INFORMATION_MODEL.key}") { value(hasItem(1)) }
+            }
     }
 }
