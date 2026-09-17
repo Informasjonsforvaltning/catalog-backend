@@ -13,14 +13,14 @@ class ResourceUriService(private val applicationProperties: ApplicationPropertie
     private val metadataByType = metadata.associateBy { it.resourceType }
 
     /**
-     * Type-specific catalog URI: `{catalogIdentifierHost}/catalogs/{catalogId}/{pathSegment}`.
+     * Type-specific catalog URI: `{catalogIdentifierHost}/{catalogId}/{pathSegment}`.
      */
     fun catalogUri(resourceType: ResourceType, catalogId: String): String {
         val pathSegment = metadata(resourceType).pathSegment
         return "${applicationProperties.catalogIdentifierHost}/$catalogId/$pathSegment"
     }
 
-    /** Resource URI: `{identifierHost}/{pathSegment}/{id}`. */
+    /** Resource URI: `{identifierHost}/{id}`. */
     fun resourceUri(resourceType: ResourceType, id: String): String {
         val metadata = metadata(resourceType)
         return "${metadata.identifierHost}/$id"

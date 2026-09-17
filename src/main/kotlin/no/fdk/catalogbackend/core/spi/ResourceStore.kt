@@ -22,8 +22,6 @@ interface ResourceStore {
 
     fun findAllPublished(catalogId: String): List<CatalogResourceEntity>
 
-    fun findPublishedById(catalogId: String, id: String): CatalogResourceEntity?
-
     fun findPublishedById(id: String): CatalogResourceEntity?
 
     fun save(entity: CatalogResourceEntity): CatalogResourceEntity
