@@ -35,7 +35,7 @@ class InformationModelMapperTest {
             published = false
             created = Instant.parse("2026-01-01T00:00:00Z")
             lastModified = Instant.parse("2026-01-02T00:00:00Z")
-            uri = "http://example.com/information-model/information-models/model-1"
+            uri = "http://example.com/model-1"
             data = mapper.toPayload(values)
         }
 
