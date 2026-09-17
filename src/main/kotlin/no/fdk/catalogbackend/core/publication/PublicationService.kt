@@ -2,21 +2,24 @@ package no.fdk.catalogbackend.core.publication
 
 import no.fdk.catalogbackend.core.model.ResourceType
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
+import no.fdk.catalogbackend.core.service.CatalogResourceService
 import no.fdk.catalogbackend.core.spi.ResourceRegistry
 import no.fdk.catalogbackend.exception.BadRequestException
-import no.fdk.catalogbackend.exception.NotFoundException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
-class PublicationService(private val registry: ResourceRegistry, private val eventPublisher: ApplicationEventPublisher) {
+class PublicationService(
+    private val catalogResourceService: CatalogResourceService,
+    private val registry: ResourceRegistry,
+    private val eventPublisher: ApplicationEventPublisher,
+) {
     @Transactional
     fun publish(resourceType: ResourceType, catalogId: String, id: String): CatalogResourceEntity {
         val store = registry.store(resourceType)
-        val entity = store.findById(catalogId, id)
-            ?: throw NotFoundException("No $resourceType with id $id in catalog $catalogId")
+        val entity = catalogResourceService.findById(resourceType, catalogId, id)
 
         if (entity.published) {
             throw BadRequestException("Resource $id in catalog $catalogId is already published")
@@ -45,8 +48,7 @@ class PublicationService(private val registry: ResourceRegistry, private val eve
     @Transactional
     fun unpublish(resourceType: ResourceType, catalogId: String, id: String): CatalogResourceEntity {
         val store = registry.store(resourceType)
-        val entity = store.findById(catalogId, id)
-            ?: throw NotFoundException("No $resourceType with id $id in catalog $catalogId")
+        val entity = catalogResourceService.findById(resourceType, catalogId, id)
 
         if (!entity.published) {
             throw BadRequestException("Resource $id in catalog $catalogId is not published")
