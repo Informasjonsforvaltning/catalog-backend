@@ -28,9 +28,6 @@ abstract class JpaResourceStore<T : CatalogResourceEntity>(
     override fun findAllPublished(catalogId: String): List<CatalogResourceEntity> =
         repository.findAllByCatalogIdAndPublishedIsTrue(catalogId)
 
-    override fun findPublishedById(catalogId: String, id: String): CatalogResourceEntity? =
-        repository.findByIdAndCatalogIdAndPublishedIsTrue(id, catalogId)
-
     override fun findPublishedById(id: String): CatalogResourceEntity? = repository.findByIdAndPublishedIsTrue(id)
 
     override fun save(entity: CatalogResourceEntity): CatalogResourceEntity = repository.save(entity.narrow())

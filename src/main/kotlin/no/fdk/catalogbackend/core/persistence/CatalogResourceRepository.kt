@@ -19,8 +19,6 @@ interface CatalogResourceRepository<T : CatalogResourceEntity> : JpaRepository<T
 
     fun findAllByCatalogIdAndPublishedIsTrue(catalogId: String): List<T>
 
-    fun findByIdAndCatalogIdAndPublishedIsTrue(id: String, catalogId: String): T?
-
     fun findByIdAndPublishedIsTrue(id: String): T?
 
     fun existsByCatalogIdAndPublishedIsTrue(catalogId: String): Boolean

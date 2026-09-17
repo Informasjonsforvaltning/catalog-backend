@@ -107,8 +107,6 @@ class JpaResourceStoreTest(@param:Autowired val registry: ResourceRegistry) {
 
         assertEquals(listOf("live", "other-live"), store().findAllPublished().map { it.id }.sorted())
         assertEquals(listOf("live"), store().findAllPublished(catalogId).map { it.id })
-        assertEquals("live", store().findPublishedById(catalogId, "live")?.id)
-        assertNull(store().findPublishedById(catalogId, "draft"))
         assertEquals("live", store().findPublishedById("live")?.id)
         assertNull(store().findPublishedById("draft"))
     }

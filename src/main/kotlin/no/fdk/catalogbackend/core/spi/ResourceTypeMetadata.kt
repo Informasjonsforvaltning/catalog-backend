@@ -5,7 +5,7 @@ import no.fdk.catalogbackend.core.model.ResourceType
 interface ResourceTypeMetadata {
     val resourceType: ResourceType
 
-    /** URL segment for this type, e.g. `information-models` or `catalogs`. */
+    /** URL segment for this type, e.g. `information-models`. */
     val pathSegment: String
 
     /** Type-specific host used when minting public resource URIs. */
