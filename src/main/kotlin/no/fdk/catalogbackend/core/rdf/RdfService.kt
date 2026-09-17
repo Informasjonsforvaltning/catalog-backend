@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 @Service
 class RdfService(private val registry: ResourceRegistry) {
     fun serializeCatalog(catalogId: String, pathSegment: String, lang: Lang): String {
-        val resourceType = registry.resourceTypes.firstOrNull { registry.metadata(it).pathSegment == pathSegment }
+        val resourceType = registry.resourceTypeForPathSegment(pathSegment)
             ?: throw NotFoundException("Unknown resource path segment: $pathSegment")
 
         val model = createModel()
@@ -25,7 +25,7 @@ class RdfService(private val registry: ResourceRegistry) {
     }
 
     fun serializeResource(pathSegment: String, id: String, lang: Lang): String {
-        val resourceType = registry.resourceTypes.firstOrNull { registry.metadata(it).pathSegment == pathSegment }
+        val resourceType = registry.resourceTypeForPathSegment(pathSegment)
             ?: throw NotFoundException("Unknown resource path segment: $pathSegment")
 
         val entity = registry.store(resourceType).findPublishedById(id)

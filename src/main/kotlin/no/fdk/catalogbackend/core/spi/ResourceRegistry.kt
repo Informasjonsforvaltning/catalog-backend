@@ -17,6 +17,15 @@ class ResourceRegistry(
     private val metadataByType = metadata.indexUnique("metadata") { it.resourceType }
     private val mappersByType = mappers.indexUnique("mapper") { it.resourceType }
     private val rdfWritersByType = rdfWriters.indexUnique("rdf writer") { it.resourceType }
+    private val typesByPathSegment = metadataByType
+        .map { (type, meta) -> meta.pathSegment to type }
+        .also { pairs ->
+            val duplicates = pairs.groupBy { it.first }.filterValues { it.size > 1 }.keys
+            require(duplicates.isEmpty()) {
+                "More than one resource type registered for path segment(s) ${duplicates.joinToString()}"
+            }
+        }
+        .toMap()
 
     /** Every type known to the application, in a stable order. */
     val resourceTypes: List<ResourceType> = storesByType.keys.sortedBy { it.key }
@@ -46,6 +55,8 @@ class ResourceRegistry(
     fun mapper(resourceType: ResourceType): ResourceMapper<*, *> = mappersByType.require(resourceType, "mapper")
 
     fun rdfWriter(resourceType: ResourceType): ResourceRdfWriter = rdfWritersByType.require(resourceType, "rdf writer")
+
+    fun resourceTypeForPathSegment(pathSegment: String): ResourceType? = typesByPathSegment[pathSegment]
 
     fun stores(): Collection<ResourceStore> = storesByType.values
 

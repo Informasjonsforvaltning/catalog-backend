@@ -17,7 +17,10 @@ class ResourceRegistryTest {
 
     private fun store(type: ResourceType) = mock<ResourceStore> { on { resourceType } doReturn type }
 
-    private fun metadata(type: ResourceType) = mock<ResourceTypeMetadata> { on { resourceType } doReturn type }
+    private fun metadata(type: ResourceType, pathSegment: String = type.key.lowercase()) = mock<ResourceTypeMetadata> {
+        on { resourceType } doReturn type
+        on { this.pathSegment } doReturn pathSegment
+    }
 
     private fun mapper(type: ResourceType) = mock<ResourceMapper<Any, Any>> { on { resourceType } doReturn type }
 
@@ -39,6 +42,7 @@ class ResourceRegistryTest {
         assertEquals(typeA, registry.metadata(typeA).resourceType)
         assertEquals(typeA, registry.mapper(typeA).resourceType)
         assertEquals(typeA, registry.rdfWriter(typeA).resourceType)
+        assertEquals(typeA, registry.resourceTypeForPathSegment("a"))
     }
 
     @Test
@@ -76,6 +80,20 @@ class ResourceRegistryTest {
         }
 
         assertEquals("More than one store registered for resource type(s) A", exception.message)
+    }
+
+    @Test
+    fun `two types claiming the same path segment fail startup`() {
+        val exception = assertFailsWith<IllegalArgumentException> {
+            registry(
+                stores = listOf(store(typeA), store(typeB)),
+                metadata = listOf(metadata(typeA, "shared"), metadata(typeB, "shared")),
+                mappers = listOf(mapper(typeA), mapper(typeB)),
+                rdfWriters = listOf(rdfWriter(typeA), rdfWriter(typeB)),
+            )
+        }
+
+        assertEquals("More than one resource type registered for path segment(s) shared", exception.message)
     }
 
     @Test
