@@ -1,5 +1,7 @@
 package no.fdk.catalogbackend.core.web
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import no.fdk.catalogbackend.core.model.CatalogCount
 import no.fdk.catalogbackend.core.service.CatalogResourceService
 import no.fdk.catalogbackend.security.Authorities
@@ -10,9 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@Tag(name = "Catalog counts")
 @RestController
 @RequestMapping("/catalogs/count")
 class CountController(private val service: CatalogResourceService) {
+    @Operation(
+        summary = "Resource counts per catalog",
+        description = "Callers are scoped to their organizations.",
+    )
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun counts(authentication: Authentication): ResponseEntity<List<CatalogCount>> {
         val authorities = authentication.authorities.mapNotNull { it.authority }
