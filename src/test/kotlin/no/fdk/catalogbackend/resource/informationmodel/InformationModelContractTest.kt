@@ -99,6 +99,38 @@ class InformationModelContractTest(
             }
 
         mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """[{"op":"add","path":"/status","value":"http://publications.europa.eu/resource/authority/product-status/PRODUCTION"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.status") { value("http://publications.europa.eu/resource/authority/product-status/PRODUCTION") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """[{"op":"replace","path":"/status","value":"http://publications.europa.eu/resource/authority/product-status/PHASED_OUT"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.status") { value("http://publications.europa.eu/resource/authority/product-status/PHASED_OUT") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"remove","path":"/status"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.status") { doesNotExist() }
+            }
+
+        mockMvc
             .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ))
             }.andExpect {

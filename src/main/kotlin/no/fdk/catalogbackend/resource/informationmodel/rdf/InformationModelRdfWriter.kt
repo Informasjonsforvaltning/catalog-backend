@@ -3,8 +3,10 @@ package no.fdk.catalogbackend.resource.informationmodel.rdf
 import no.fdk.catalogbackend.config.ApplicationProperties
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.rdf.addContactPoints
+import no.fdk.catalogbackend.core.rdf.safeAddLinkedProperty
 import no.fdk.catalogbackend.core.rdf.safeAddLocalizedString
 import no.fdk.catalogbackend.core.rdf.safeCreateResource
+import no.fdk.catalogbackend.core.rdf.vocabulary.ADMS
 import no.fdk.catalogbackend.core.rdf.vocabulary.MODELLDCATNO
 import no.fdk.catalogbackend.core.service.ResourceUriService
 import no.fdk.catalogbackend.core.spi.ResourceRdfWriter
@@ -28,6 +30,7 @@ class InformationModelRdfWriter(
 
     override fun write(model: Model, entity: CatalogResourceEntity) {
         model.setNsPrefix("modelldcatno", MODELLDCATNO.URI)
+        model.setNsPrefix("adms", ADMS.URI)
 
         val values = objectMapper.convertValue(entity.data ?: emptyMap<String, Any?>(), InformationModelValues::class.java)
         val catalogUri = resourceUriService.catalogUri(INFORMATION_MODEL, entity.catalogId)
@@ -47,6 +50,7 @@ class InformationModelRdfWriter(
             .addProperty(DCTerms.publisher, model.safeCreateResource(organizationUri))
             .safeAddLocalizedString(DCTerms.title, values.title)
             .safeAddLocalizedString(DCTerms.description, values.description)
+            .safeAddLinkedProperty(ADMS.status, values.status)
             .addContactPoints(values.contactPoints)
 
         catalog.addProperty(MODELLDCATNO.model, informationModel)
