@@ -10,6 +10,7 @@ data class InformationModelValues(
     val title: LocalizedStrings? = null,
     val description: LocalizedStrings? = null,
     val contactPoints: List<ContactPoint>? = null,
+    val status: String? = null,
 )
 
 @Schema(description = "Information model including server-owned metadata")
@@ -25,4 +26,6 @@ data class InformationModelDto(
     val title: LocalizedStrings? = null,
     val description: LocalizedStrings? = null,
     val contactPoints: List<ContactPoint>? = null,
+    @field:Schema(description = "Model maturity status (adms:status). URI from the EU Product status vocabulary.")
+    val status: String? = null,
 )

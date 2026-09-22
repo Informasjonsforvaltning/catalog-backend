@@ -69,6 +69,7 @@ class RDFControllerTest(
                 data = mapOf(
                     "title" to mapOf("nb" to "Testmodell"),
                     "description" to mapOf("nb" to "En beskrivelse"),
+                    "status" to "http://publications.europa.eu/resource/authority/product-status/PRODUCTION",
                     "contactPoints" to listOf(
                         mapOf(
                             "name" to mapOf("nb" to "Kontakt"),
