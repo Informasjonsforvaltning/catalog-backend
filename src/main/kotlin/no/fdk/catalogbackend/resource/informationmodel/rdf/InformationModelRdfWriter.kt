@@ -51,6 +51,7 @@ class InformationModelRdfWriter(
             .safeAddLocalizedString(DCTerms.title, values.title)
             .safeAddLocalizedString(DCTerms.description, values.description)
             .safeAddLinkedProperty(ADMS.status, values.status)
+            .safeAddLinkedProperty(FOAF.homepage, values.homepage)
             .addContactPoints(values.contactPoints)
 
         catalog.addProperty(MODELLDCATNO.model, informationModel)
