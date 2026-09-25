@@ -46,6 +46,7 @@ class InformationModelRdfWriterTest {
                 "title" to mapOf("nb" to "Testmodell"),
                 "description" to mapOf("nb" to "En beskrivelse"),
                 "status" to "http://publications.europa.eu/resource/authority/product-status/PRODUCTION",
+                "version" to mapOf("major" to 1, "minor" to 0, "patch" to 0),
                 "contactPoints" to listOf(
                     mapOf(
                         "name" to mapOf("nb" to "Kontakt"),

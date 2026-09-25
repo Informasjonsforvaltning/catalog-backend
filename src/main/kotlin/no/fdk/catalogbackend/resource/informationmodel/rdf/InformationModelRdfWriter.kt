@@ -5,6 +5,7 @@ import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.rdf.addContactPoints
 import no.fdk.catalogbackend.core.rdf.safeAddLinkedProperty
 import no.fdk.catalogbackend.core.rdf.safeAddLocalizedString
+import no.fdk.catalogbackend.core.rdf.safeAddStringLiteral
 import no.fdk.catalogbackend.core.rdf.safeCreateResource
 import no.fdk.catalogbackend.core.rdf.vocabulary.ADMS
 import no.fdk.catalogbackend.core.rdf.vocabulary.MODELLDCATNO
@@ -16,6 +17,7 @@ import org.apache.jena.rdf.model.Model
 import org.apache.jena.sparql.vocabulary.FOAF
 import org.apache.jena.vocabulary.DCAT
 import org.apache.jena.vocabulary.DCTerms
+import org.apache.jena.vocabulary.OWL
 import org.apache.jena.vocabulary.RDF
 import org.springframework.stereotype.Component
 import tools.jackson.databind.ObjectMapper
@@ -31,6 +33,7 @@ class InformationModelRdfWriter(
     override fun write(model: Model, entity: CatalogResourceEntity) {
         model.setNsPrefix("modelldcatno", MODELLDCATNO.URI)
         model.setNsPrefix("adms", ADMS.URI)
+        model.setNsPrefix("owl", OWL.getURI())
 
         val values = objectMapper.convertValue(entity.data ?: emptyMap<String, Any?>(), InformationModelValues::class.java)
         val catalogUri = resourceUriService.catalogUri(INFORMATION_MODEL, entity.catalogId)
@@ -51,6 +54,7 @@ class InformationModelRdfWriter(
             .safeAddLocalizedString(DCTerms.title, values.title)
             .safeAddLocalizedString(DCTerms.description, values.description)
             .safeAddLinkedProperty(ADMS.status, values.status)
+            .safeAddStringLiteral(OWL.versionInfo, values.version?.toString())
             .addContactPoints(values.contactPoints)
 
         catalog.addProperty(MODELLDCATNO.model, informationModel)

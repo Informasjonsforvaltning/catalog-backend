@@ -2,6 +2,7 @@ package no.fdk.catalogbackend.resource.informationmodel
 
 import no.fdk.catalogbackend.core.model.ContactPoint
 import no.fdk.catalogbackend.core.model.LocalizedStrings
+import no.fdk.catalogbackend.core.model.SemVer
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -28,6 +29,7 @@ class InformationModelMapperTest {
                 ),
             ),
             status = "http://publications.europa.eu/resource/authority/product-status/DEVELOPMENT",
+            version = SemVer(1, 2, 3),
         )
 
         val entity = object : CatalogResourceEntity() {}.apply {
@@ -58,6 +60,7 @@ class InformationModelMapperTest {
             dto.contactPoints,
         )
         assertEquals("http://publications.europa.eu/resource/authority/product-status/DEVELOPMENT", dto.status)
+        assertEquals(SemVer(1, 2, 3), dto.version)
         assertEquals(values, mapper.toValues(dto))
     }
 
@@ -76,5 +79,6 @@ class InformationModelMapperTest {
         assertNull(dto.description)
         assertNull(dto.contactPoints)
         assertNull(dto.status)
+        assertNull(dto.version)
     }
 }
