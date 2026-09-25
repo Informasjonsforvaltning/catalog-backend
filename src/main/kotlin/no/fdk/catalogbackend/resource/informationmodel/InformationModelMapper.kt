@@ -28,6 +28,7 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
             contactPoints = values.contactPoints,
             status = values.status,
             homepage = values.homepage,
+            version = values.version,
         )
     }
 
@@ -37,5 +38,6 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
         contactPoints = dto.contactPoints,
         status = dto.status,
         homepage = dto.homepage,
+        version = dto.version,
     )
 }

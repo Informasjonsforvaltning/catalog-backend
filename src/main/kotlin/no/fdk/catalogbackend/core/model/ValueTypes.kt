@@ -21,3 +21,9 @@ data class ContactPoint(
     val telephone: String? = null,
     val url: String? = null,
 )
+
+data class SemVer(val major: Int, val minor: Int, val patch: Int) : Comparable<SemVer> {
+    override fun compareTo(other: SemVer): Int = compareValuesBy(this, other, { it.major }, { it.minor }, { it.patch })
+
+    override fun toString(): String = "$major.$minor.$patch"
+}

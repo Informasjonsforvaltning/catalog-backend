@@ -3,6 +3,7 @@ package no.fdk.catalogbackend.resource.informationmodel
 import io.swagger.v3.oas.annotations.media.Schema
 import no.fdk.catalogbackend.core.model.ContactPoint
 import no.fdk.catalogbackend.core.model.LocalizedStrings
+import no.fdk.catalogbackend.core.model.SemVer
 import java.time.Instant
 
 @Schema(description = "Writable information-model fields (jsonb payload)")
@@ -12,6 +13,7 @@ data class InformationModelValues(
     val contactPoints: List<ContactPoint>? = null,
     val status: String? = null,
     val homepage: String? = null,
+    val version: SemVer? = null,
 )
 
 @Schema(description = "Information model including server-owned metadata")
@@ -31,4 +33,6 @@ data class InformationModelDto(
     val status: String? = null,
     @field:Schema(description = "Homepage for the information model (foaf:homepage). URI of a document with more information.")
     val homepage: String? = null,
+    @field:Schema(description = "Semantic version (owl:versionInfo), e.g. major.minor.patch.")
+    val version: SemVer? = null,
 )
