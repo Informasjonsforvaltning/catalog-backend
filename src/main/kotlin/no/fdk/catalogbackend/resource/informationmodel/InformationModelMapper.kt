@@ -27,6 +27,7 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
             description = values.description,
             contactPoints = values.contactPoints,
             status = values.status,
+            homepage = values.homepage,
         )
     }
 
@@ -35,5 +36,6 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
         description = dto.description,
         contactPoints = dto.contactPoints,
         status = dto.status,
+        homepage = dto.homepage,
     )
 }

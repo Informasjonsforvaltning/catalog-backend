@@ -20,6 +20,7 @@
         dct:title          "Testmodell"@nb ;
         dct:description    "En beskrivelse"@nb ;
         adms:status        <http://publications.europa.eu/resource/authority/product-status/PRODUCTION> ;
+        foaf:homepage      <https://example.com/models/testmodell> ;
         dcat:contactPoint  [ a                 vcard:Organization ;
                              vcard:fn          "Kontakt"@nb ;
                              vcard:hasEmail    <mailto:kontakt@example.com> ;

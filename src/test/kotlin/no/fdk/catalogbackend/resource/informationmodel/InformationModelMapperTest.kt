@@ -28,6 +28,7 @@ class InformationModelMapperTest {
                 ),
             ),
             status = "http://publications.europa.eu/resource/authority/product-status/DEVELOPMENT",
+            homepage = "https://modeltest.com",
         )
 
         val entity = object : CatalogResourceEntity() {}.apply {
@@ -58,6 +59,7 @@ class InformationModelMapperTest {
             dto.contactPoints,
         )
         assertEquals("http://publications.europa.eu/resource/authority/product-status/DEVELOPMENT", dto.status)
+        assertEquals("https://modeltest.com", dto.homepage)
         assertEquals(values, mapper.toValues(dto))
     }
 
