@@ -18,6 +18,7 @@
         adms:status        <http://publications.europa.eu/resource/authority/product-status/PRODUCTION> ;
         foaf:homepage      <https://example.com/models/testmodell> ;
         owl:versionInfo    "1.0.0" ;
+        dct:creator        <https://example.com/organizations/910244132> ;
         dcat:contactPoint  [ a                 vcard:Organization ;
                              vcard:fn          "Kontakt"@nb ;
                              vcard:hasEmail    <mailto:kontakt@example.com> ;
