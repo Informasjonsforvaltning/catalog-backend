@@ -72,6 +72,7 @@ class RDFControllerTest(
                     "status" to "http://publications.europa.eu/resource/authority/product-status/PRODUCTION",
                     "homepage" to "https://example.com/models/testmodell",
                     "version" to mapOf("major" to 1, "minor" to 0, "patch" to 0),
+                    "creator" to "https://example.com/organizations/910244132",
                     "contactPoints" to listOf(
                         mapOf(
                             "name" to mapOf("nb" to "Kontakt"),

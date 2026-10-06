@@ -31,6 +31,7 @@ class InformationModelMapperTest {
             status = "http://publications.europa.eu/resource/authority/product-status/DEVELOPMENT",
             homepage = "https://modeltest.com",
             version = SemVer(1, 2, 3),
+            creator = "https://example.com/organizations/910244132",
         )
 
         val entity = object : CatalogResourceEntity() {}.apply {
@@ -63,6 +64,7 @@ class InformationModelMapperTest {
         assertEquals("http://publications.europa.eu/resource/authority/product-status/DEVELOPMENT", dto.status)
         assertEquals("https://modeltest.com", dto.homepage)
         assertEquals(SemVer(1, 2, 3), dto.version)
+        assertEquals("https://example.com/organizations/910244132", dto.creator)
         assertEquals(values, mapper.toValues(dto))
     }
 
@@ -82,5 +84,6 @@ class InformationModelMapperTest {
         assertNull(dto.contactPoints)
         assertNull(dto.status)
         assertNull(dto.version)
+        assertNull(dto.creator)
     }
 }

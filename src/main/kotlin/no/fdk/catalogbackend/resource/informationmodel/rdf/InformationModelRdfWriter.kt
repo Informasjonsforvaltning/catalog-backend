@@ -65,6 +65,7 @@ class InformationModelRdfWriter(
             .safeAddLinkedProperty(ADMS.status, values.status)
             .safeAddLinkedProperty(FOAF.homepage, values.homepage)
             .safeAddStringLiteral(OWL.versionInfo, values.version?.toString())
+            .safeAddLinkedProperty(DCTerms.creator, values.creator)
             .addContactPoints(values.contactPoints)
     }
 

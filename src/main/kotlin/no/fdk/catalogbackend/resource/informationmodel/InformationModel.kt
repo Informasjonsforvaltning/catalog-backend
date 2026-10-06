@@ -14,6 +14,7 @@ data class InformationModelValues(
     val status: String? = null,
     val homepage: String? = null,
     val version: SemVer? = null,
+    val creator: String? = null,
 )
 
 @Schema(description = "Information model including server-owned metadata")
@@ -35,4 +36,6 @@ data class InformationModelDto(
     val homepage: String? = null,
     @field:Schema(description = "Semantic version (owl:versionInfo), e.g. major.minor.patch.")
     val version: SemVer? = null,
+    @field:Schema(description = "Creator of the information model (dct:creator). URI of an agent.")
+    val creator: String? = null,
 )
