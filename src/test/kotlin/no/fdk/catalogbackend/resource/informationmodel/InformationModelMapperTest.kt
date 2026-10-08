@@ -32,6 +32,10 @@ class InformationModelMapperTest {
             homepage = "https://modeltest.com",
             version = SemVer(1, 2, 3),
             creator = "https://example.com/organizations/910244132",
+            subjects = listOf(
+                "https://www.wikidata.org/entity/Q183560",
+                "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
+            ),
         )
 
         val entity = object : CatalogResourceEntity() {}.apply {
@@ -65,6 +69,13 @@ class InformationModelMapperTest {
         assertEquals("https://modeltest.com", dto.homepage)
         assertEquals(SemVer(1, 2, 3), dto.version)
         assertEquals("https://example.com/organizations/910244132", dto.creator)
+        assertEquals(
+            listOf(
+                "https://www.wikidata.org/entity/Q183560",
+                "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
+            ),
+            dto.subjects,
+        )
         assertEquals(values, mapper.toValues(dto))
     }
 
@@ -85,5 +96,6 @@ class InformationModelMapperTest {
         assertNull(dto.status)
         assertNull(dto.version)
         assertNull(dto.creator)
+        assertNull(dto.subjects)
     }
 }

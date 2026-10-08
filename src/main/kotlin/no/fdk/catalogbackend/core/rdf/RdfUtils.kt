@@ -60,6 +60,11 @@ fun Resource.safeAddLinkedProperty(property: Property, value: String?): Resource
     addProperty(property, model.createResource(value))
 }
 
+fun Resource.safeAddLinkedProperties(property: Property, values: List<String>?): Resource {
+    values?.forEach { safeAddLinkedProperty(property, it) }
+    return this
+}
+
 fun Resource.safeAddFlexibleDateLiteral(property: Property, value: String?): Resource {
     if (value.isNullOrEmpty()) return this
     val xsdType = when (value.length) {

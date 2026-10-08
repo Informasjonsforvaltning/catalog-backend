@@ -30,6 +30,7 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
             homepage = values.homepage,
             version = values.version,
             creator = values.creator,
+            subjects = values.subjects,
         )
     }
 
@@ -41,5 +42,6 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
         homepage = dto.homepage,
         version = dto.version,
         creator = dto.creator,
+        subjects = dto.subjects,
     )
 }
