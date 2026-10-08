@@ -128,7 +128,35 @@ class RDFControllerTest(
             .contentAsString
 
         val catalogModel = ModelFactory.createDefaultModel().read(StringReader(catalogBody), null, "TURTLE")
-        assertTrue(catalogModel.isEmpty)
+        assertTrue(
+            checkIfIsomorphicAndPrintDiff(
+                catalogModel,
+                loadTurtle("rdf/empty_information_model_catalog.ttl"),
+                "empty-catalog-endpoint",
+                logger,
+            ),
+        )
+    }
+
+    @Test
+    fun `catalog graph includes catalog shell when no published resources exist`() {
+        val catalogBody = mockMvc
+            .get("/graphs/catalogs/$CATALOG_ID/information-models") {
+                header(HttpHeaders.ACCEPT, "text/turtle")
+            }.andExpect { status { isOk() } }
+            .andReturn()
+            .response
+            .contentAsString
+
+        val catalogModel = ModelFactory.createDefaultModel().read(StringReader(catalogBody), null, "TURTLE")
+        assertTrue(
+            checkIfIsomorphicAndPrintDiff(
+                catalogModel,
+                loadTurtle("rdf/empty_information_model_catalog.ttl"),
+                "empty-catalog-no-resources",
+                logger,
+            ),
+        )
     }
 
     @Test

@@ -20,7 +20,9 @@ class RdfService(private val registry: ResourceRegistry) {
 
         val model = createModel()
         val writer = registry.rdfWriter(resourceType)
-        registry.store(resourceType).findAllPublished(catalogId).forEach { writer.write(model, it) }
+        val published = registry.store(resourceType).findAllPublished(catalogId)
+        writer.writeCatalog(model, catalogId, published)
+        published.forEach { writer.write(model, it) }
         return model.createRDFResponse(lang)
     }
 

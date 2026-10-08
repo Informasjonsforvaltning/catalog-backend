@@ -73,12 +73,21 @@ class FakeResourceMapper : ResourceMapper<FakeValues, FakeDto> {
 class FakeResourceRdfWriter(private val resourceUriService: ResourceUriService) : ResourceRdfWriter {
     override val resourceType = FAKE_RESOURCE
 
-    override fun write(model: Model, entity: CatalogResourceEntity) {
-        val catalog = model.createResource(resourceUriService.catalogUri(FAKE_RESOURCE, entity.catalogId))
+    override fun writeCatalog(model: Model, catalogId: String, members: List<CatalogResourceEntity>) {
+        val catalog = model.createResource(resourceUriService.catalogUri(FAKE_RESOURCE, catalogId))
             .addProperty(RDF.type, DCAT.Catalog)
+        members.forEach { entity ->
+            val resourceUri = entity.uri ?: resourceUriService.resourceUri(FAKE_RESOURCE, entity.id)
+            catalog.addProperty(
+                ResourceFactory.createProperty("https://example.com/ns#fake"),
+                model.createResource(resourceUri),
+            )
+        }
+    }
+
+    override fun write(model: Model, entity: CatalogResourceEntity) {
         val resourceUri = entity.uri ?: resourceUriService.resourceUri(FAKE_RESOURCE, entity.id)
-        val resource = model.createResource(resourceUri)
+        model.createResource(resourceUri)
             .addProperty(RDF.type, ResourceFactory.createResource("https://example.com/ns#FakeResource"))
-        catalog.addProperty(ResourceFactory.createProperty("https://example.com/ns#fake"), resource)
     }
 }

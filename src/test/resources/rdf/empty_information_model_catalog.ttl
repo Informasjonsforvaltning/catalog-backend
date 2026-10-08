@@ -1,0 +1,6 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+<http://localhost:5050/910244132/information-models>
+        a              dcat:Catalog ;
+        dct:publisher  <http://localhost:5050/organizations/910244132> .
