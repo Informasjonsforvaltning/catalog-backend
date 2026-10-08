@@ -22,17 +22,16 @@ import kotlin.test.assertTrue
 class InformationModelRdfWriterTest {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val properties = ApplicationProperties(
-        catalogIdentifierHost = "http://localhost:5050",
-        informationModelIdentifierHost = "http://localhost:5050",
+        resourceIdentifierHost = "http://localhost:5050",
         catalogBackendUri = "http://localhost:5050",
         organizationCatalogUri = "http://localhost:5050",
         harvestAdminUri = "http://localhost:5050",
     )
     private val resourceUriService = mock<ResourceUriService> {
         on { catalogUri(INFORMATION_MODEL, "910244132") } doReturn
-            "http://localhost:5050/910244132/information-models"
+            "http://localhost:5050/catalogs/910244132/information-models"
         on { resourceUri(INFORMATION_MODEL, "model-1") } doReturn
-            "http://localhost:5050/model-1"
+            "http://localhost:5050/information-models/model-1"
     }
     private val writer = InformationModelRdfWriter(resourceUriService, properties, jacksonObjectMapper())
 
@@ -54,7 +53,7 @@ class InformationModelRdfWriterTest {
     private fun sampleEntity() = InformationModelEntity().apply {
         id = "model-1"
         catalogId = "910244132"
-        uri = "http://localhost:5050/model-1"
+        uri = "http://localhost:5050/information-models/model-1"
         data = mapOf(
             "title" to mapOf("nb" to "Testmodell"),
             "description" to mapOf("nb" to "En beskrivelse"),
@@ -102,7 +101,7 @@ class InformationModelRdfWriterTest {
         val entity = InformationModelEntity().apply {
             id = "model-1"
             catalogId = "910244132"
-            uri = "http://localhost:5050/model-1"
+            uri = "http://localhost:5050/information-models/model-1"
             data = mapOf("title" to mapOf("nb" to "Testmodell"))
         }
 

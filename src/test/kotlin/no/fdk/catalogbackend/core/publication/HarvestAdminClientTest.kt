@@ -50,8 +50,7 @@ class HarvestAdminClientTest {
     fun setUp() {
         client = HarvestAdminClient(
             ApplicationProperties(
-                catalogIdentifierHost = "http://localhost:5050",
-                informationModelIdentifierHost = "http://localhost:5050",
+                resourceIdentifierHost = "http://localhost:5050",
                 catalogBackendUri = "http://localhost:5050",
                 organizationCatalogUri = "http://localhost:5050",
                 harvestAdminUri = "http://harvest-admin:8080",

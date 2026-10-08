@@ -10,7 +10,7 @@
         a               foaf:Agent ;
         dct:identifier  "910244132" .
 
-<http://localhost:5050/model-1>
+<http://localhost:5050/information-models/model-1>
         a                  modelldcatno:InformationModel ;
         dct:publisher      <http://localhost:5050/organizations/910244132> ;
         dct:title          "Testmodell"@nb ;
