@@ -30,25 +30,34 @@ class InformationModelRdfWriter(
 ) : ResourceRdfWriter {
     override val resourceType = INFORMATION_MODEL
 
+    override fun writeCatalog(model: Model, catalogId: String, members: List<CatalogResourceEntity>) {
+        model.setNsPrefix("modelldcatno", MODELLDCATNO.URI)
+
+        val organizationUri = organizationUri(catalogId)
+        val catalog = model.safeCreateResource(resourceUriService.catalogUri(INFORMATION_MODEL, catalogId))
+            .addProperty(RDF.type, DCAT.Catalog)
+            .addProperty(DCTerms.publisher, model.safeCreateResource(organizationUri))
+
+        members.forEach { entity ->
+            val resourceUri = entity.uri ?: resourceUriService.resourceUri(INFORMATION_MODEL, entity.id)
+            catalog.addProperty(MODELLDCATNO.model, model.safeCreateResource(resourceUri))
+        }
+    }
+
     override fun write(model: Model, entity: CatalogResourceEntity) {
         model.setNsPrefix("modelldcatno", MODELLDCATNO.URI)
         model.setNsPrefix("adms", ADMS.URI)
         model.setNsPrefix("owl", OWL.getURI())
 
         val values = objectMapper.convertValue(entity.data ?: emptyMap<String, Any?>(), InformationModelValues::class.java)
-        val catalogUri = resourceUriService.catalogUri(INFORMATION_MODEL, entity.catalogId)
-        val organizationUri = "${applicationProperties.organizationCatalogUri}/organizations/${entity.catalogId}"
+        val organizationUri = organizationUri(entity.catalogId)
         val resourceUri = entity.uri ?: resourceUriService.resourceUri(INFORMATION_MODEL, entity.id)
 
         model.safeCreateResource(organizationUri)
             .addProperty(RDF.type, FOAF.Agent)
             .addProperty(DCTerms.identifier, entity.catalogId)
 
-        val catalog = model.safeCreateResource(catalogUri)
-            .addProperty(RDF.type, DCAT.Catalog)
-            .addProperty(DCTerms.publisher, model.safeCreateResource(organizationUri))
-
-        val informationModel = model.safeCreateResource(resourceUri)
+        model.safeCreateResource(resourceUri)
             .addProperty(RDF.type, MODELLDCATNO.InformationModel)
             .addProperty(DCTerms.publisher, model.safeCreateResource(organizationUri))
             .safeAddLocalizedString(DCTerms.title, values.title)
@@ -57,7 +66,7 @@ class InformationModelRdfWriter(
             .safeAddLinkedProperty(FOAF.homepage, values.homepage)
             .safeAddStringLiteral(OWL.versionInfo, values.version?.toString())
             .addContactPoints(values.contactPoints)
-
-        catalog.addProperty(MODELLDCATNO.model, informationModel)
     }
+
+    private fun organizationUri(catalogId: String): String = "${applicationProperties.organizationCatalogUri}/organizations/$catalogId"
 }
