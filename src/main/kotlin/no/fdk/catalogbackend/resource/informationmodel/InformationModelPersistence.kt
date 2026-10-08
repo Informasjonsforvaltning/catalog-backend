@@ -23,7 +23,7 @@ class InformationModelStore(repository: InformationModelRepository) :
 class InformationModelMetadata(private val applicationProperties: ApplicationProperties) : ResourceTypeMetadata {
     override val resourceType = INFORMATION_MODEL
     override val pathSegment = "information-models"
-    override val identifierHost = applicationProperties.informationModelIdentifierHost
+    override val identifierHost = "${applicationProperties.resourceIdentifierHost}/information-models"
     override val dataSourceType = "ModellDCAT-AP-NO"
     override val harvestDataType = "informationmodel"
 }

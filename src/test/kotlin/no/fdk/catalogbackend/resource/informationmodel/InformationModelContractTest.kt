@@ -85,7 +85,7 @@ class InformationModelContractTest(
                 jsonPath("$.title.nb") { value("Modell") }
                 jsonPath("$.description.nb") { value("Modellbeskrivelse") }
                 jsonPath("$.published") { value(false) }
-                jsonPath("$.uri") { value("${applicationProperties.informationModelIdentifierHost}/$id") }
+                jsonPath("$.uri") { value("${applicationProperties.resourceIdentifierHost}/information-models/$id") }
             }
 
         mockMvc

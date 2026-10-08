@@ -65,7 +65,7 @@ class RDFControllerTest(
                 this.published = published
                 created = Instant.now()
                 lastModified = Instant.now()
-                uri = "http://localhost:5050/$id"
+                uri = "http://localhost:5050/information-models/$id"
                 data = mapOf(
                     "title" to mapOf("nb" to "Testmodell"),
                     "description" to mapOf("nb" to "En beskrivelse"),
