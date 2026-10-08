@@ -24,6 +24,8 @@
         foaf:homepage      <https://example.com/models/testmodell> ;
         owl:versionInfo    "1.0.0" ;
         dct:creator        <https://example.com/organizations/910244132> ;
+        dct:subject        <https://www.wikidata.org/entity/Q183560> ,
+                           <https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0> ;
         dcat:contactPoint  [ a                 vcard:Organization ;
                              vcard:fn          "Kontakt"@nb ;
                              vcard:hasEmail    <mailto:kontakt@example.com> ;
