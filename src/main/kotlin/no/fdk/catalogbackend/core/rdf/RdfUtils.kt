@@ -11,10 +11,13 @@ import org.apache.jena.riot.Lang
 import org.apache.jena.vocabulary.DCAT
 import org.apache.jena.vocabulary.RDF
 import org.apache.jena.vocabulary.VCARD4
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import java.io.StringWriter
 import java.net.URI
+
+private val logger = LoggerFactory.getLogger("no.fdk.catalogbackend.core.rdf.RdfUtils")
 
 fun Resource.safeAddLocalizedString(property: Property, langMap: LocalizedStrings?): Resource {
     langMap?.nb?.let { safeAddLangLiteral(property, it, "nb") }
@@ -54,21 +57,40 @@ fun Resource.safeAddProperty(property: Property, value: Resource?): Resource = i
     addProperty(property, value)
 }
 
-fun Resource.safeAddLinkedProperty(property: Property, value: String?): Resource = if (value.isNullOrEmpty()) {
-    this
-} else {
-    addProperty(property, model.createResource(value))
+fun Resource.safeAddLinkedProperty(property: Property, value: String?): Resource = when {
+    value.isNullOrEmpty() -> this
+
+    !value.isValidURI() -> {
+        logger.warn("Skipping invalid URI for {}: {}", property.uri, value)
+        this
+    }
+
+    else -> addProperty(property, model.createResource(value))
+}
+
+fun Resource.safeAddLinkedProperties(property: Property, values: List<String>?): Resource {
+    values?.forEach { safeAddLinkedProperty(property, it) }
+    return this
 }
 
 fun Resource.safeAddFlexibleDateLiteral(property: Property, value: String?): Resource {
     if (value.isNullOrEmpty()) return this
     val xsdType = when (value.length) {
         4 -> XSDDatatype.XSDgYear
+
         7 -> XSDDatatype.XSDgYearMonth
+
         10 -> XSDDatatype.XSDdate
-        else -> return this
+
+        else -> {
+            logger.warn("Skipping invalid date for {}: {}", property.uri, value)
+            return this
+        }
     }
-    if (!xsdType.isValid(value)) return this
+    if (!xsdType.isValid(value)) {
+        logger.warn("Skipping invalid date for {}: {}", property.uri, value)
+        return this
+    }
     return safeAddLiteral(property, model.createTypedLiteral(value, xsdType))
 }
 
@@ -78,8 +100,10 @@ fun Resource.addContactPoints(contactPoints: List<ContactPoint>?): Resource {
             .safeCreateResource()
             .addProperty(RDF.type, VCARD4.Organization)
             .safeAddLocalizedString(VCARD4.fn, it.name)
-            .safeAddLinkedProperty(VCARD4.hasURL, it.url.takeIf { url -> url.isValidURI() })
-            .safeAddLinkedProperty(VCARD4.hasEmail, it.email?.addContactStringPrefix("mailto:"))
+            .safeAddLinkedProperty(VCARD4.hasURL, it.url)
+        it.email?.addContactStringPrefix("mailto:")?.let { mailto ->
+            resource.addProperty(VCARD4.hasEmail, model.createResource(mailto))
+        }
         if (!it.telephone.isNullOrBlank()) {
             resource.addProperty(VCARD4.hasTelephone, model.telephoneResource(it.telephone))
         }
@@ -114,8 +138,16 @@ fun Model.safeCreateResource(value: String? = null): Resource = try {
         ?.let(::URI)
         ?.takeIf { it.isAbsolute && !it.isOpaque && !it.host.isNullOrEmpty() }
         ?.let { createResource(value) }
-        ?: createResource()
+        ?: run {
+            if (!value.isNullOrEmpty()) {
+                logger.warn("Skipping invalid resource URI, creating blank node: {}", value)
+            }
+            createResource()
+        }
 } catch (_: Exception) {
+    if (!value.isNullOrEmpty()) {
+        logger.warn("Skipping invalid resource URI, creating blank node: {}", value)
+    }
     createResource()
 }
 
