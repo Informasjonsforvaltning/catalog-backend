@@ -73,6 +73,10 @@ class RDFControllerTest(
                     "homepage" to "https://example.com/models/testmodell",
                     "version" to mapOf("major" to 1, "minor" to 0, "patch" to 0),
                     "creator" to "https://example.com/organizations/910244132",
+                    "subjects" to listOf(
+                        "https://www.wikidata.org/entity/Q183560",
+                        "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
+                    ),
                     "contactPoints" to listOf(
                         mapOf(
                             "name" to mapOf("nb" to "Kontakt"),

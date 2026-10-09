@@ -20,10 +20,10 @@ class ResourceUriService(private val applicationProperties: ApplicationPropertie
         return "${applicationProperties.resourceIdentifierHost}/catalogs/$catalogId/$pathSegment"
     }
 
-    /** Resource URI: `{identifierHost}/{id}`. */
+    /** Resource URI: `{resourceIdentifierHost}/{pathSegment}/{id}`. */
     fun resourceUri(resourceType: ResourceType, id: String): String {
-        val metadata = metadata(resourceType)
-        return "${metadata.identifierHost}/$id"
+        val pathSegment = metadata(resourceType).pathSegment
+        return "${applicationProperties.resourceIdentifierHost}/$pathSegment/$id"
     }
 
     private fun metadata(resourceType: ResourceType): ResourceTypeMetadata = metadataByType[resourceType]
