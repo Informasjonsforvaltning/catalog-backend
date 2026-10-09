@@ -92,7 +92,7 @@ Checklist — one package, one migration, zero core edits:
    - repository extending `CatalogResourceRepository<Entity>`
    - `@Component` store extending `JpaResourceStore<Entity>(MY_TYPE, repository, Entity::class, ::Entity)`
 5. Implement beans:
-   - `ResourceTypeMetadata` — `pathSegment`, `identifierHost`, `dataSourceType`, `harvestDataType`
+   - `ResourceTypeMetadata` — `pathSegment`, `dataSourceType`, `harvestDataType`
    - `ResourceMapper<Values, Dto>` — jsonb payload ↔ DTO
    - `ResourceRdfWriter` — write published entities into a Jena `Model` (URI resources, not blank nodes, for catalog and resource)
 6. Thin `@RestController` under `/catalogs/{catalogId}/{pathSegment}` that delegates to `CatalogResourceOperations` (CRUD + publish/unpublish). Do **not** extend a Spring MVC base class for `@PreAuthorize` — use delegation.
@@ -106,7 +106,7 @@ Publish/harvest wiring is automatic: first publish in a catalog for that type cr
 - Catalog graph: `GET /graphs/catalogs/{catalogId}/{pathSegment}`
 - Resource graph: `GET /graphs/{pathSegment}/{id}`
 
-Minted identifier IRIs use type-specific hosts from `ApplicationProperties` / metadata — not the `/graphs` API base.
+Minted identifier IRIs use `application.resourceIdentifierHost` plus the type's `pathSegment` — not the `/graphs` API base.
 
 ## Conventions
 

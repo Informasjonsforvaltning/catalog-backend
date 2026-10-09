@@ -8,9 +8,6 @@ interface ResourceTypeMetadata {
     /** URL segment for this type, e.g. `information-models`. */
     val pathSegment: String
 
-    /** Type-specific host used when minting public resource URIs. */
-    val identifierHost: String
-
     /** harvest-admin data source type, e.g. `ModellDCAT-AP-NO`. */
     val dataSourceType: String
 

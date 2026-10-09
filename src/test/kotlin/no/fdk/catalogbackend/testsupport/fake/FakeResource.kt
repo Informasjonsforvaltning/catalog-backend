@@ -35,7 +35,6 @@ class FakeResourceStore(repository: FakeResourceRepository) :
 class FakeResourceMetadata : ResourceTypeMetadata {
     override val resourceType = FAKE_RESOURCE
     override val pathSegment = "fake-resources"
-    override val identifierHost = "http://localhost:5050"
     override val dataSourceType = "FAKE-AP-NO"
     override val harvestDataType = "fake"
 }

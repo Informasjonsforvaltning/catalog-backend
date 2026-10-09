@@ -2,7 +2,6 @@ package no.fdk.catalogbackend.resource.informationmodel
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
-import no.fdk.catalogbackend.config.ApplicationProperties
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.persistence.CatalogResourceRepository
 import no.fdk.catalogbackend.core.persistence.JpaResourceStore
@@ -20,10 +19,9 @@ class InformationModelStore(repository: InformationModelRepository) :
     JpaResourceStore<InformationModelEntity>(INFORMATION_MODEL, repository, InformationModelEntity::class, ::InformationModelEntity)
 
 @Component
-class InformationModelMetadata(private val applicationProperties: ApplicationProperties) : ResourceTypeMetadata {
+class InformationModelMetadata : ResourceTypeMetadata {
     override val resourceType = INFORMATION_MODEL
     override val pathSegment = "information-models"
-    override val identifierHost = "${applicationProperties.resourceIdentifierHost}/information-models"
     override val dataSourceType = "ModellDCAT-AP-NO"
     override val harvestDataType = "informationmodel"
 }
