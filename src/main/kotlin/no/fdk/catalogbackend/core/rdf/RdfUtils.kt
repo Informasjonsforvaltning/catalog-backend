@@ -77,11 +77,20 @@ fun Resource.safeAddFlexibleDateLiteral(property: Property, value: String?): Res
     if (value.isNullOrEmpty()) return this
     val xsdType = when (value.length) {
         4 -> XSDDatatype.XSDgYear
+
         7 -> XSDDatatype.XSDgYearMonth
+
         10 -> XSDDatatype.XSDdate
-        else -> return this
+
+        else -> {
+            logger.warn("Skipping invalid date for {}: {}", property.uri, value)
+            return this
+        }
     }
-    if (!xsdType.isValid(value)) return this
+    if (!xsdType.isValid(value)) {
+        logger.warn("Skipping invalid date for {}: {}", property.uri, value)
+        return this
+    }
     return safeAddLiteral(property, model.createTypedLiteral(value, xsdType))
 }
 
@@ -129,8 +138,16 @@ fun Model.safeCreateResource(value: String? = null): Resource = try {
         ?.let(::URI)
         ?.takeIf { it.isAbsolute && !it.isOpaque && !it.host.isNullOrEmpty() }
         ?.let { createResource(value) }
-        ?: createResource()
+        ?: run {
+            if (!value.isNullOrEmpty()) {
+                logger.warn("Skipping invalid resource URI, creating blank node: {}", value)
+            }
+            createResource()
+        }
 } catch (_: Exception) {
+    if (!value.isNullOrEmpty()) {
+        logger.warn("Skipping invalid resource URI, creating blank node: {}", value)
+    }
     createResource()
 }
 
