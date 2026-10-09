@@ -36,6 +36,7 @@ class InformationModelMapperTest {
                 "https://www.wikidata.org/entity/Q183560",
                 "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
             ),
+            modified = "2026-03-15",
         )
 
         val entity = object : CatalogResourceEntity() {}.apply {
@@ -76,6 +77,7 @@ class InformationModelMapperTest {
             ),
             dto.subjects,
         )
+        assertEquals("2026-03-15", dto.modified)
         assertEquals(values, mapper.toValues(dto))
     }
 
@@ -97,5 +99,6 @@ class InformationModelMapperTest {
         assertNull(dto.version)
         assertNull(dto.creator)
         assertNull(dto.subjects)
+        assertNull(dto.modified)
     }
 }

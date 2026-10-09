@@ -9,6 +9,7 @@ import no.fdk.catalogbackend.testsupport.checkIfIsomorphicAndPrintDiff
 import no.fdk.catalogbackend.testsupport.loadTurtle
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.riot.Lang
+import org.apache.jena.vocabulary.DCTerms
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
@@ -16,6 +17,7 @@ import org.mockito.kotlin.mock
 import org.slf4j.LoggerFactory
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.io.StringReader
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @Tag("unit")
@@ -65,6 +67,7 @@ class InformationModelRdfWriterTest {
                 "https://www.wikidata.org/entity/Q183560",
                 "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
             ),
+            "modified" to "2026-03-15",
             "contactPoints" to listOf(
                 mapOf(
                     "name" to mapOf("nb" to "Kontakt"),
@@ -98,6 +101,21 @@ class InformationModelRdfWriterTest {
                 logger,
             ),
         )
+    }
+
+    @Test
+    fun `invalid modified date is omitted`() {
+        val entity = InformationModelEntity().apply {
+            id = "model-1"
+            catalogId = "910244132"
+            uri = "http://localhost:5050/model-1"
+            data = mapOf("title" to mapOf("nb" to "Testmodell"), "modified" to "15.03.2026")
+        }
+
+        val actual = ModelFactory.createDefaultModel()
+        writer.write(actual, entity)
+
+        assertFalse(actual.contains(null, DCTerms.modified))
     }
 
     @Test
