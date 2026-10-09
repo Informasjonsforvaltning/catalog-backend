@@ -11,10 +11,13 @@ import org.apache.jena.riot.Lang
 import org.apache.jena.vocabulary.DCAT
 import org.apache.jena.vocabulary.RDF
 import org.apache.jena.vocabulary.VCARD4
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import java.io.StringWriter
 import java.net.URI
+
+private val logger = LoggerFactory.getLogger("no.fdk.catalogbackend.core.rdf.RdfUtils")
 
 fun Resource.safeAddLocalizedString(property: Property, langMap: LocalizedStrings?): Resource {
     langMap?.nb?.let { safeAddLangLiteral(property, it, "nb") }
@@ -54,10 +57,15 @@ fun Resource.safeAddProperty(property: Property, value: Resource?): Resource = i
     addProperty(property, value)
 }
 
-fun Resource.safeAddLinkedProperty(property: Property, value: String?): Resource = if (value.isNullOrEmpty()) {
-    this
-} else {
-    addProperty(property, model.createResource(value))
+fun Resource.safeAddLinkedProperty(property: Property, value: String?): Resource = when {
+    value.isNullOrEmpty() -> this
+
+    !value.isValidURI() -> {
+        logger.warn("Skipping invalid URI for {}: {}", property.uri, value)
+        this
+    }
+
+    else -> addProperty(property, model.createResource(value))
 }
 
 fun Resource.safeAddLinkedProperties(property: Property, values: List<String>?): Resource {
@@ -83,8 +91,10 @@ fun Resource.addContactPoints(contactPoints: List<ContactPoint>?): Resource {
             .safeCreateResource()
             .addProperty(RDF.type, VCARD4.Organization)
             .safeAddLocalizedString(VCARD4.fn, it.name)
-            .safeAddLinkedProperty(VCARD4.hasURL, it.url.takeIf { url -> url.isValidURI() })
-            .safeAddLinkedProperty(VCARD4.hasEmail, it.email?.addContactStringPrefix("mailto:"))
+            .safeAddLinkedProperty(VCARD4.hasURL, it.url)
+        it.email?.addContactStringPrefix("mailto:")?.let { mailto ->
+            resource.addProperty(VCARD4.hasEmail, model.createResource(mailto))
+        }
         if (!it.telephone.isNullOrBlank()) {
             resource.addProperty(VCARD4.hasTelephone, model.telephoneResource(it.telephone))
         }
