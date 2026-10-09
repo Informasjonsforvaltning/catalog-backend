@@ -29,6 +29,7 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
             status = values.status,
             homepage = values.homepage,
             version = values.version,
+            modified = values.modified,
         )
     }
 
@@ -39,5 +40,6 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
         status = dto.status,
         homepage = dto.homepage,
         version = dto.version,
+        modified = dto.modified,
     )
 }

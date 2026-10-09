@@ -4,6 +4,7 @@
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix adms: <http://www.w3.org/ns/adms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix modelldcatno: <https://data.norge.no/vocabulary/modelldcatno#> .
 
 <http://localhost:5050/organizations/910244132>
@@ -18,6 +19,7 @@
         adms:status        <http://publications.europa.eu/resource/authority/product-status/PRODUCTION> ;
         foaf:homepage      <https://example.com/models/testmodell> ;
         owl:versionInfo    "1.0.0" ;
+        dct:modified       "2026-03-15"^^xsd:date ;
         dcat:contactPoint  [ a                 vcard:Organization ;
                              vcard:fn          "Kontakt"@nb ;
                              vcard:hasEmail    <mailto:kontakt@example.com> ;
