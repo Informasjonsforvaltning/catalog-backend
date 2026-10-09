@@ -3,6 +3,7 @@ package no.fdk.catalogbackend.resource.informationmodel.rdf
 import no.fdk.catalogbackend.config.ApplicationProperties
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import no.fdk.catalogbackend.core.rdf.addContactPoints
+import no.fdk.catalogbackend.core.rdf.safeAddFlexibleDateLiteral
 import no.fdk.catalogbackend.core.rdf.safeAddLinkedProperty
 import no.fdk.catalogbackend.core.rdf.safeAddLocalizedString
 import no.fdk.catalogbackend.core.rdf.safeAddStringLiteral
@@ -65,6 +66,7 @@ class InformationModelRdfWriter(
             .safeAddLinkedProperty(ADMS.status, values.status)
             .safeAddLinkedProperty(FOAF.homepage, values.homepage)
             .safeAddStringLiteral(OWL.versionInfo, values.version?.toString())
+            .safeAddFlexibleDateLiteral(DCTerms.modified, values.modified)
             .addContactPoints(values.contactPoints)
     }
 

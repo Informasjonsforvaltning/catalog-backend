@@ -161,6 +161,36 @@ class InformationModelContractTest(
             }
 
         mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"add","path":"/modified","value":"2026-03-15"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.modified") { value("2026-03-15") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"replace","path":"/modified","value":"2026-04-01"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.modified") { value("2026-04-01") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"remove","path":"/modified"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.modified") { doesNotExist() }
+            }
+
+        mockMvc
             .get("/catalogs/$CATALOG_ID/information-models") {
                 header(HttpHeaders.AUTHORIZATION, bearer(Access.ORG_READ))
             }.andExpect {
