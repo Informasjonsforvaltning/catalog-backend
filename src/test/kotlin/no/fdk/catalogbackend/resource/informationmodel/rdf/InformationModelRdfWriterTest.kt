@@ -10,13 +10,17 @@ import no.fdk.catalogbackend.testsupport.loadTurtle
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.riot.Lang
 import org.apache.jena.vocabulary.DCTerms
+import org.apache.jena.vocabulary.XSD
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.slf4j.LoggerFactory
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.io.StringReader
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -101,6 +105,24 @@ class InformationModelRdfWriterTest {
                 logger,
             ),
         )
+    }
+
+    @ParameterizedTest
+    @CsvSource("1996, gYear", "1996-11, gYearMonth", "2026-03-15, date")
+    fun `modified is written with the xsd type matching its precision`(value: String, xsdType: String) {
+        val entity = InformationModelEntity().apply {
+            id = "model-1"
+            catalogId = "910244132"
+            uri = "http://localhost:5050/model-1"
+            data = mapOf("title" to mapOf("nb" to "Testmodell"), "modified" to value)
+        }
+
+        val actual = ModelFactory.createDefaultModel()
+        writer.write(actual, entity)
+
+        val literal = actual.listObjectsOfProperty(DCTerms.modified).toList().single().asLiteral()
+        assertEquals(value, literal.lexicalForm)
+        assertEquals(XSD.NS + xsdType, literal.datatypeURI)
     }
 
     @Test
