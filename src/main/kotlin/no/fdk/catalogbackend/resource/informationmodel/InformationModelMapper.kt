@@ -31,6 +31,7 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
             version = values.version,
             creator = values.creator,
             subjects = values.subjects,
+            modified = values.modified,
         )
     }
 
@@ -43,5 +44,6 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
         version = dto.version,
         creator = dto.creator,
         subjects = dto.subjects,
+        modified = dto.modified,
     )
 }

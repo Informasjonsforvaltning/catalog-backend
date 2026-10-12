@@ -16,6 +16,7 @@ data class InformationModelValues(
     val version: SemVer? = null,
     val creator: String? = null,
     val subjects: List<String>? = null,
+    val modified: String? = null,
 )
 
 @Schema(description = "Information model including server-owned metadata")
@@ -41,4 +42,5 @@ data class InformationModelDto(
     val creator: String? = null,
     @field:Schema(description = "Subjects of the information model (dct:subject). URIs of concepts or themes.")
     val subjects: List<String>? = null,
+    val modified: String? = null,
 )

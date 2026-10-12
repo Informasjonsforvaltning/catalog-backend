@@ -77,6 +77,7 @@ class RDFControllerTest(
                         "https://www.wikidata.org/entity/Q183560",
                         "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
                     ),
+                    "modified" to "2026-03-15",
                     "contactPoints" to listOf(
                         mapOf(
                             "name" to mapOf("nb" to "Kontakt"),
