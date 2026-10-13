@@ -71,6 +71,7 @@ class InformationModelRdfWriterTest {
                 "https://www.wikidata.org/entity/Q183560",
                 "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
             ),
+            "issued" to "2026-01-10",
             "modified" to "2026-03-15",
             "contactPoints" to listOf(
                 mapOf(
@@ -126,17 +127,18 @@ class InformationModelRdfWriterTest {
     }
 
     @Test
-    fun `invalid modified date is omitted`() {
+    fun `invalid issued and modified dates are omitted`() {
         val entity = InformationModelEntity().apply {
             id = "model-1"
             catalogId = "910244132"
             uri = "http://localhost:5050/model-1"
-            data = mapOf("title" to mapOf("nb" to "Testmodell"), "modified" to "15.03.2026")
+            data = mapOf("title" to mapOf("nb" to "Testmodell"), "issued" to "10.01.2026", "modified" to "15.03.2026")
         }
 
         val actual = ModelFactory.createDefaultModel()
         writer.write(actual, entity)
 
+        assertFalse(actual.contains(null, DCTerms.issued))
         assertFalse(actual.contains(null, DCTerms.modified))
     }
 

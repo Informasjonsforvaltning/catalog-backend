@@ -194,6 +194,36 @@ class InformationModelContractTest(
             .patch(location) {
                 header(HttpHeaders.AUTHORIZATION, bearer())
                 contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"add","path":"/issued","value":"2026-01-10"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.issued") { value("2026-01-10") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"replace","path":"/issued","value":"2026-02-01"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.issued") { value("2026-02-01") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"remove","path":"/issued"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.issued") { doesNotExist() }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
                 content = """[{"op":"add","path":"/modified","value":"2026-03-15"}]"""
             }.andExpect {
                 status { isOk() }
