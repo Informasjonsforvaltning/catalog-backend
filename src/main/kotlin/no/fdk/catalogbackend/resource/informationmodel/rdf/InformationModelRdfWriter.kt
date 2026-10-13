@@ -69,6 +69,7 @@ class InformationModelRdfWriter(
             .safeAddStringLiteral(OWL.versionInfo, values.version?.toString())
             .safeAddLinkedProperty(DCTerms.creator, values.creator)
             .safeAddLinkedProperties(DCTerms.subject, values.subjects)
+            .safeAddFlexibleDateLiteral(DCTerms.issued, values.issued)
             .safeAddFlexibleDateLiteral(DCTerms.modified, values.modified)
             .addContactPoints(values.contactPoints)
     }
