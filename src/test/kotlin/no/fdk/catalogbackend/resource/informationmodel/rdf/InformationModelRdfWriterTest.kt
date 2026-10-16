@@ -81,6 +81,14 @@ class InformationModelRdfWriterTest {
                     "source" to "http://localhost:5050/information-models/model-parent",
                 ),
             ),
+            "hasFormat" to listOf(
+                mapOf(
+                    "title" to mapOf("nb" to "PNG-visning"),
+                    "language" to "http://publications.europa.eu/resource/authority/language/NOB",
+                    "format" to "http://publications.europa.eu/resource/authority/file-type/PNG",
+                    "seeAlso" to "https://example.com/models/testmodell.png",
+                ),
+            ),
             "issued" to "2026-01-10",
             "modified" to "2026-03-15",
             "contactPoints" to listOf(

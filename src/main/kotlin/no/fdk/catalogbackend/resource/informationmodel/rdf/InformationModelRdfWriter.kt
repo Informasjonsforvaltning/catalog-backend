@@ -71,6 +71,7 @@ class InformationModelRdfWriter(
             .safeAddLinkedProperty(DCTerms.creator, values.creator)
             .safeAddLinkedProperties(DCTerms.subject, values.subjects)
             .safeAddRelations(values.relations)
+            .addModelDocuments(values.hasFormat)
             .safeAddFlexibleDateLiteral(DCTerms.issued, values.issued)
             .safeAddFlexibleDateLiteral(DCTerms.modified, values.modified)
             .addContactPoints(values.contactPoints)
