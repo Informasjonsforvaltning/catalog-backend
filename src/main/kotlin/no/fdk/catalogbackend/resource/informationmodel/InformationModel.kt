@@ -3,6 +3,7 @@ package no.fdk.catalogbackend.resource.informationmodel
 import io.swagger.v3.oas.annotations.media.Schema
 import no.fdk.catalogbackend.core.model.ContactPoint
 import no.fdk.catalogbackend.core.model.LocalizedStrings
+import no.fdk.catalogbackend.core.model.ResourceRelation
 import no.fdk.catalogbackend.core.model.SemVer
 import java.time.Instant
 
@@ -16,6 +17,7 @@ data class InformationModelValues(
     val version: SemVer? = null,
     val creator: String? = null,
     val subjects: List<String>? = null,
+    val relations: List<ResourceRelation>? = null,
     val issued: String? = null,
     val modified: String? = null,
 )
@@ -43,6 +45,8 @@ data class InformationModelDto(
     val creator: String? = null,
     @field:Schema(description = "Subjects of the information model (dct:subject). URIs of concepts or themes.")
     val subjects: List<String>? = null,
+    @field:Schema(description = "Relations to other information models, type is the predicate URI and source is the related model URI.")
+    val relations: List<ResourceRelation>? = null,
     val issued: String? = null,
     val modified: String? = null,
 )

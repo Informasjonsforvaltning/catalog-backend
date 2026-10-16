@@ -2,6 +2,7 @@ package no.fdk.catalogbackend.core.rdf
 
 import no.fdk.catalogbackend.core.model.ContactPoint
 import no.fdk.catalogbackend.core.model.LocalizedStrings
+import no.fdk.catalogbackend.core.model.ResourceRelation
 import org.apache.jena.datatypes.xsd.XSDDatatype
 import org.apache.jena.rdf.model.Literal
 import org.apache.jena.rdf.model.Model
@@ -70,6 +71,24 @@ fun Resource.safeAddLinkedProperty(property: Property, value: String?): Resource
 
 fun Resource.safeAddLinkedProperties(property: Property, values: List<String>?): Resource {
     values?.forEach { safeAddLinkedProperty(property, it) }
+    return this
+}
+
+/**
+ * Adds triples where both the predicate ([ResourceRelation.type]) and the object
+ * ([ResourceRelation.source]) are URIs. Entries with invalid URIs are skipped.
+ */
+fun Resource.safeAddRelations(relations: List<ResourceRelation>?): Resource {
+    relations?.forEach { relation ->
+        val propertyUri = relation.type
+        val sourceUri = relation.source
+        when {
+            !propertyUri.isValidURI() || !sourceUri.isValidURI() ->
+                logger.warn("Skipping relation with invalid URI(s): type={}, source={}", propertyUri, sourceUri)
+
+            else -> addProperty(model.createProperty(propertyUri), model.createResource(sourceUri))
+        }
+    }
     return this
 }
 
