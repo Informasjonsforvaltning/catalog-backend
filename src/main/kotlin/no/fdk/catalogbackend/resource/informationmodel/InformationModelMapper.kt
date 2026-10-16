@@ -32,6 +32,7 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
             creator = values.creator,
             subjects = values.subjects,
             relations = values.relations,
+            hasFormat = values.hasFormat,
             issued = values.issued,
             modified = values.modified,
         )
@@ -47,6 +48,7 @@ class InformationModelMapper(private val objectMapper: ObjectMapper) : ResourceM
         creator = dto.creator,
         subjects = dto.subjects,
         relations = dto.relations,
+        hasFormat = dto.hasFormat,
         issued = dto.issued,
         modified = dto.modified,
     )

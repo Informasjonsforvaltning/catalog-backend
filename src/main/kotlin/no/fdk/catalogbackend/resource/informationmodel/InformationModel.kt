@@ -7,6 +7,13 @@ import no.fdk.catalogbackend.core.model.ResourceRelation
 import no.fdk.catalogbackend.core.model.SemVer
 import java.time.Instant
 
+data class ModelDocument(
+    val title: LocalizedStrings? = null,
+    val language: String? = null,
+    val format: String? = null,
+    val seeAlso: String? = null,
+)
+
 @Schema(description = "Writable information-model fields (jsonb payload)")
 data class InformationModelValues(
     val title: LocalizedStrings? = null,
@@ -18,6 +25,7 @@ data class InformationModelValues(
     val creator: String? = null,
     val subjects: List<String>? = null,
     val relations: List<ResourceRelation>? = null,
+    val hasFormat: List<ModelDocument>? = null,
     val issued: String? = null,
     val modified: String? = null,
 )
@@ -47,6 +55,8 @@ data class InformationModelDto(
     val subjects: List<String>? = null,
     @field:Schema(description = "Relations to other information models, type is the predicate URI and source is the related model URI.")
     val relations: List<ResourceRelation>? = null,
+    @field:Schema(description = "Representations of the information model.")
+    val hasFormat: List<ModelDocument>? = null,
     val issued: String? = null,
     val modified: String? = null,
 )
