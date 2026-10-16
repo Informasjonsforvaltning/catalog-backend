@@ -71,6 +71,16 @@ class InformationModelRdfWriterTest {
                 "https://www.wikidata.org/entity/Q183560",
                 "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
             ),
+            "relations" to listOf(
+                mapOf(
+                    "type" to "http://purl.org/dc/terms/replaces",
+                    "source" to "http://localhost:5050/information-models/model-0",
+                ),
+                mapOf(
+                    "type" to "http://purl.org/dc/terms/isPartOf",
+                    "source" to "http://localhost:5050/information-models/model-parent",
+                ),
+            ),
             "issued" to "2026-01-10",
             "modified" to "2026-03-15",
             "contactPoints" to listOf(
