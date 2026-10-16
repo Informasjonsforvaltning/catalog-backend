@@ -230,6 +230,42 @@ class InformationModelContractTest(
             .patch(location) {
                 header(HttpHeaders.AUTHORIZATION, bearer())
                 contentType = MediaType.APPLICATION_JSON
+                content =
+                    """[{"op":"add","path":"/hasFormat","value":[{"title":{"nb":"PNG-visning"},"language":"http://publications.europa.eu/resource/authority/language/NOB","format":"http://publications.europa.eu/resource/authority/file-type/PNG","seeAlso":"https://example.com/models/model-1.png"}]}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.hasFormat.length()") { value(1) }
+                jsonPath("$.hasFormat[0].title.nb") { value("PNG-visning") }
+                jsonPath("$.hasFormat[0].seeAlso") { value("https://example.com/models/model-1.png") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """[{"op":"replace","path":"/hasFormat","value":[{"title":{"nb":"JSON Schema"},"format":"http://publications.europa.eu/resource/authority/file-type/JSON","seeAlso":"https://example.com/models/model-1.json"}]}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.hasFormat.length()") { value(1) }
+                jsonPath("$.hasFormat[0].title.nb") { value("JSON Schema") }
+                jsonPath("$.hasFormat[0].seeAlso") { value("https://example.com/models/model-1.json") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"remove","path":"/hasFormat"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.hasFormat") { doesNotExist() }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
                 content = """[{"op":"add","path":"/issued","value":"2026-01-10"}]"""
             }.andExpect {
                 status { isOk() }

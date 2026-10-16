@@ -47,6 +47,14 @@ class InformationModelMapperTest {
                     source = "https://example.com/information-models/part",
                 ),
             ),
+            hasFormat = listOf(
+                ModelDocument(
+                    title = LocalizedStrings(nb = "PNG-visning"),
+                    language = "http://publications.europa.eu/resource/authority/language/NOB",
+                    format = "http://publications.europa.eu/resource/authority/file-type/PNG",
+                    seeAlso = "https://example.com/models/testmodell.png",
+                ),
+            ),
             issued = "2026-01-10",
             modified = "2026-03-15",
         )
@@ -102,6 +110,17 @@ class InformationModelMapperTest {
             ),
             dto.relations,
         )
+        assertEquals(
+            listOf(
+                ModelDocument(
+                    title = LocalizedStrings(nb = "PNG-visning"),
+                    language = "http://publications.europa.eu/resource/authority/language/NOB",
+                    format = "http://publications.europa.eu/resource/authority/file-type/PNG",
+                    seeAlso = "https://example.com/models/testmodell.png",
+                ),
+            ),
+            dto.hasFormat,
+        )
         assertEquals("2026-01-10", dto.issued)
         assertEquals("2026-03-15", dto.modified)
         assertEquals(values, mapper.toValues(dto))
@@ -126,6 +145,7 @@ class InformationModelMapperTest {
         assertNull(dto.creator)
         assertNull(dto.subjects)
         assertNull(dto.relations)
+        assertNull(dto.hasFormat)
         assertNull(dto.issued)
         assertNull(dto.modified)
     }
