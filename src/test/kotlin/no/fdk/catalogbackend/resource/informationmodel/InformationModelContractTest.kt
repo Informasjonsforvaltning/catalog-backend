@@ -194,6 +194,42 @@ class InformationModelContractTest(
             .patch(location) {
                 header(HttpHeaders.AUTHORIZATION, bearer())
                 contentType = MediaType.APPLICATION_JSON
+                content =
+                    """[{"op":"add","path":"/relations","value":[{"type":"http://purl.org/dc/terms/replaces","source":"https://example.com/information-models/old"}]}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.relations.length()") { value(1) }
+                jsonPath("$.relations[0].type") { value("http://purl.org/dc/terms/replaces") }
+                jsonPath("$.relations[0].source") { value("https://example.com/information-models/old") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """[{"op":"replace","path":"/relations","value":[{"type":"http://purl.org/dc/terms/isReplacedBy","source":"https://example.com/information-models/new"},{"type":"http://purl.org/dc/terms/hasPart","source":"https://example.com/information-models/part"}]}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.relations.length()") { value(2) }
+                jsonPath("$.relations[0].type") { value("http://purl.org/dc/terms/isReplacedBy") }
+                jsonPath("$.relations[1].source") { value("https://example.com/information-models/part") }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
+                content = """[{"op":"remove","path":"/relations"}]"""
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.relations") { doesNotExist() }
+            }
+
+        mockMvc
+            .patch(location) {
+                header(HttpHeaders.AUTHORIZATION, bearer())
+                contentType = MediaType.APPLICATION_JSON
                 content = """[{"op":"add","path":"/issued","value":"2026-01-10"}]"""
             }.andExpect {
                 status { isOk() }

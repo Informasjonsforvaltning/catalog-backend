@@ -27,6 +27,8 @@
         dct:creator        <https://example.com/organizations/910244132> ;
         dct:subject        <https://www.wikidata.org/entity/Q183560> ,
                            <https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0> ;
+        dct:replaces       <http://localhost:5050/information-models/model-0> ;
+        dct:isPartOf       <http://localhost:5050/information-models/model-parent> ;
         dct:issued         "2026-01-10"^^xsd:date ;
         dct:modified       "2026-03-15"^^xsd:date ;
         dcat:contactPoint  [ a                 vcard:Organization ;
