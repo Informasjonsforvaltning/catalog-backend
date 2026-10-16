@@ -7,6 +7,7 @@ import no.fdk.catalogbackend.core.rdf.safeAddFlexibleDateLiteral
 import no.fdk.catalogbackend.core.rdf.safeAddLinkedProperties
 import no.fdk.catalogbackend.core.rdf.safeAddLinkedProperty
 import no.fdk.catalogbackend.core.rdf.safeAddLocalizedString
+import no.fdk.catalogbackend.core.rdf.safeAddRelations
 import no.fdk.catalogbackend.core.rdf.safeAddStringLiteral
 import no.fdk.catalogbackend.core.rdf.safeCreateResource
 import no.fdk.catalogbackend.core.rdf.vocabulary.ADMS
@@ -69,6 +70,7 @@ class InformationModelRdfWriter(
             .safeAddStringLiteral(OWL.versionInfo, values.version?.toString())
             .safeAddLinkedProperty(DCTerms.creator, values.creator)
             .safeAddLinkedProperties(DCTerms.subject, values.subjects)
+            .safeAddRelations(values.relations)
             .safeAddFlexibleDateLiteral(DCTerms.issued, values.issued)
             .safeAddFlexibleDateLiteral(DCTerms.modified, values.modified)
             .addContactPoints(values.contactPoints)

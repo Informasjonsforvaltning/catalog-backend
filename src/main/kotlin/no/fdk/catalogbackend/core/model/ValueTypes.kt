@@ -22,6 +22,8 @@ data class ContactPoint(
     val url: String? = null,
 )
 
+data class ResourceRelation(val type: String? = null, val source: String? = null)
+
 data class SemVer(val major: Int, val minor: Int, val patch: Int) : Comparable<SemVer> {
     override fun compareTo(other: SemVer): Int = compareValuesBy(this, other, { it.major }, { it.minor }, { it.patch })
 

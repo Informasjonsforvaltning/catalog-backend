@@ -2,6 +2,7 @@ package no.fdk.catalogbackend.resource.informationmodel
 
 import no.fdk.catalogbackend.core.model.ContactPoint
 import no.fdk.catalogbackend.core.model.LocalizedStrings
+import no.fdk.catalogbackend.core.model.ResourceRelation
 import no.fdk.catalogbackend.core.model.SemVer
 import no.fdk.catalogbackend.core.persistence.CatalogResourceEntity
 import org.junit.jupiter.api.Tag
@@ -35,6 +36,16 @@ class InformationModelMapperTest {
             subjects = listOf(
                 "https://www.wikidata.org/entity/Q183560",
                 "https://data.norge.no/concepts/68aea19b-eb20-41e4-8a7c-85b7e6451bc0",
+            ),
+            relations = listOf(
+                ResourceRelation(
+                    type = "http://purl.org/dc/terms/replaces",
+                    source = "https://example.com/information-models/old",
+                ),
+                ResourceRelation(
+                    type = "http://purl.org/dc/terms/hasPart",
+                    source = "https://example.com/information-models/part",
+                ),
             ),
             issued = "2026-01-10",
             modified = "2026-03-15",
@@ -78,6 +89,19 @@ class InformationModelMapperTest {
             ),
             dto.subjects,
         )
+        assertEquals(
+            listOf(
+                ResourceRelation(
+                    type = "http://purl.org/dc/terms/replaces",
+                    source = "https://example.com/information-models/old",
+                ),
+                ResourceRelation(
+                    type = "http://purl.org/dc/terms/hasPart",
+                    source = "https://example.com/information-models/part",
+                ),
+            ),
+            dto.relations,
+        )
         assertEquals("2026-01-10", dto.issued)
         assertEquals("2026-03-15", dto.modified)
         assertEquals(values, mapper.toValues(dto))
@@ -101,6 +125,7 @@ class InformationModelMapperTest {
         assertNull(dto.version)
         assertNull(dto.creator)
         assertNull(dto.subjects)
+        assertNull(dto.relations)
         assertNull(dto.issued)
         assertNull(dto.modified)
     }
